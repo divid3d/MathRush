@@ -246,7 +246,7 @@ public class GameOverActivity extends AppCompatActivity {
 
                                 smoothScroller.setTargetPosition(indexOfScore);
                                 mRecyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
- 
+
 
                             }
                         })
