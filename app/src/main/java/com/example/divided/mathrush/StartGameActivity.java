@@ -1,6 +1,5 @@
 package com.example.divided.mathrush;
 
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
@@ -9,7 +8,6 @@ import android.os.CountDownTimer;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
@@ -35,14 +33,10 @@ public class StartGameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_game);
 
-        container = (ConstraintLayout) findViewById(R.id.mStartGameLayout);
-        mTitle = (TextView) findViewById(R.id.mTitle);
-        mStartButton = (Button) findViewById(R.id.mStartButton);
-        //mStartButton.setAlpha(0);
-        //mStartButton.animate().alpha(1.0f).setDuration(3000).start();
-        mQuitButton = (Button) findViewById(R.id.mQuitButton2);
-        // mQuitButton.setAlpha(0);
-        //mQuitButton.animate().alpha(1.0f).setDuration(3000).start();
+        container = findViewById(R.id.mStartGameLayout);
+        mTitle = findViewById(R.id.mTitle);
+        mStartButton = findViewById(R.id.mStartButton);
+        mQuitButton = findViewById(R.id.mQuitButton2);
         anim = (AnimationDrawable) container.getBackground();
         anim.setEnterFadeDuration(6000);
         anim.setExitFadeDuration(2000);
