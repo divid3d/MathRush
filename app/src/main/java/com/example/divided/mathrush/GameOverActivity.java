@@ -16,8 +16,6 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -124,16 +122,16 @@ public class GameOverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_over);
 
 
-        container = (ConstraintLayout) findViewById(R.id.mGameOverLayout);
+        container = findViewById(R.id.mGameOverLayout);
         anim = (AnimationDrawable) container.getBackground();
         anim.setEnterFadeDuration(6000);
         anim.setExitFadeDuration(2000);
-        mRetryButton = (Button) findViewById(R.id.mRetryButton);
-        mGameOver = (TextView) findViewById(R.id.mGameOver);
-        mQuitButton = (Button) findViewById(R.id.mQuitButton);
-        mClearRanking = (Button) findViewById(R.id.mClearRanking);
-        mSummary = (TextView) findViewById(R.id.mSummary);
-        mRecyclerView = (RecyclerView) findViewById(R.id.mScoreView);
+        mRetryButton = findViewById(R.id.mRetryButton);
+        mGameOver = findViewById(R.id.mGameOver);
+        mQuitButton = findViewById(R.id.mQuitButton);
+        mClearRanking = findViewById(R.id.mClearRanking);
+        mSummary = findViewById(R.id.mSummary);
+        mRecyclerView = findViewById(R.id.mScoreView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
@@ -248,9 +246,7 @@ public class GameOverActivity extends AppCompatActivity {
 
                                 smoothScroller.setTargetPosition(indexOfScore);
                                 mRecyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
-                                //mRecyclerView.getLayoutManager().findViewByPosition(0).startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.new_score_pulse_animation));
-//no kurwa jak to zrobic ???? ;c
-
+ 
 
                             }
                         })
