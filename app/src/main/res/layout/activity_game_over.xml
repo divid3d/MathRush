@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mGameOverLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/animation_list"
+    tools:context=".GameOverActivity">
+
+    <TextView
+        android:id="@+id/mSummary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/mGameOver"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/mGameOver"
+        app:layout_constraintTop_toBottomOf="@+id/mGameOver"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/mRetryButton"
+        android:layout_width="175dp"
+        android:layout_height="65dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="Retry"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/mGameOver"
+        app:layout_constraintStart_toStartOf="@+id/mGameOver"
+        app:layout_constraintTop_toBottomOf="@+id/mScoreView"
+        app:layout_constraintVertical_bias="0.23000002" />
+
+    <Button
+        android:id="@+id/mQuitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="Quit"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/mRetryButton"
+        app:layout_constraintStart_toStartOf="@+id/mRetryButton"
+        app:layout_constraintTop_toBottomOf="@+id/mRetryButton"
+        app:layout_constraintVertical_bias="0.120000005" />
+
+    <TextView
+        android:id="@+id/mGameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="275dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Game Over"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mScoreView"
+        android:layout_width="357dp"
+        android:layout_height="310dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layoutAnimation="@anim/ranking_list_animation"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/mGameOver"
+        app:layout_constraintStart_toStartOf="@+id/mGameOver"
+        app:layout_constraintTop_toBottomOf="@+id/mSummary"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/mClearRanking"
+        android:layout_width="wrap_content"
+        android:layout_height="39dp"
+        android:background="@drawable/button"
+        android:drawableEnd="@android:drawable/ic_menu_delete"
+        android:foreground="?attr/selectableItemBackground"
+        android:text="Clear"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/mScoreView"
+        app:layout_constraintEnd_toEndOf="@+id/mScoreView"
+        app:layout_constraintTop_toTopOf="@+id/mSummary" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Math Rush</string>
+    <string name="title_activity_start_game">StartGameActivity</string>
+</resources>

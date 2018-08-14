@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/animation_list"
+    tools:context=".MainActivity">
+
+
+    <com.daimajia.numberprogressbar.NumberProgressBar
+        android:id="@+id/mTimeLeftBar"
+        android:layout_width="0dp"
+        android:layout_height="14dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/mAnswerButton1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mEquationBox"
+        app:progress_max="5000"
+        app:progress_reached_bar_height="10dp"
+        app:progress_reached_color="@color/colorPrimaryDark"
+        app:progress_text_visibility="invisible"
+        app:progress_unreached_bar_height="5dp"
+        app:progress_unreached_color="@android:color/white" />
+
+    <TextView
+        android:id="@+id/mEquationBox"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="300dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/button"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:textSize="50dp" />
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/mAnswerButton1"
+        android:layout_width="140dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="75dp"
+        android:background="@drawable/button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:soundEffectsEnabled="false"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toStartOf="@+id/mAnswerButton2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/mEquationBox"
+        app:layout_constraintTop_toBottomOf="@+id/mEquationBox" />
+
+    <Button
+        android:id="@+id/mAnswerButton2"
+        android:layout_width="140dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="75dp"
+        android:background="@drawable/button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:soundEffectsEnabled="false"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="@+id/mEquationBox"
+        app:layout_constraintTop_toBottomOf="@+id/mEquationBox" />
+
+    <Button
+        android:id="@+id/mAnswerButton3"
+        android:layout_width="140dp"
+        android:layout_height="85dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:soundEffectsEnabled="false"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/mAnswerButton1"
+        app:layout_constraintStart_toStartOf="@+id/mAnswerButton1"
+        app:layout_constraintTop_toBottomOf="@+id/mAnswerButton1" />
+
+    <Button
+        android:id="@+id/mAnswerButton4"
+        android:layout_width="140dp"
+        android:layout_height="85dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:soundEffectsEnabled="false"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/mAnswerButton2"
+        app:layout_constraintStart_toStartOf="@+id/mAnswerButton2"
+        app:layout_constraintTop_toBottomOf="@+id/mAnswerButton2" />
+
+    <TextView
+        android:id="@+id/mRoundBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="right"
+        android:textColor="@android:color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.93"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/mTimeLeftTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toTopOf="@+id/mTimeLeftBar"
+        app:layout_constraintEnd_toEndOf="@+id/mTimeLeftBar"
+        app:layout_constraintStart_toStartOf="@+id/mTimeLeftBar"
+        app:layout_constraintTop_toBottomOf="@+id/mEquationBox" />
+
+    <TextView
+        android:id="@+id/mScoreBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="left"
+        android:textColor="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>
