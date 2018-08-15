@@ -2,10 +2,10 @@ package com.example.divided.mathrush;
 
 public class ScoreInformation {
     private String name;
-    private String round;
-    private String score;
+    private int round;
+    private int score;
 
-    ScoreInformation(String name, String round, String score) {
+    ScoreInformation(String name, int round, int score) {
         this.name = name;
         this.round = round;
         this.score = score;
@@ -15,11 +15,11 @@ public class ScoreInformation {
         return name;
     }
 
-    public String getRound() {
+    public int getRound() {
         return round;
     }
 
-    public String getScore() {
+    public int getScore() {
         return score;
     }
 

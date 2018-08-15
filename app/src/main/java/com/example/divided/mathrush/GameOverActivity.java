@@ -51,15 +51,13 @@ public class GameOverActivity extends AppCompatActivity {
         @Override
         public int compare(ScoreInformation o1, ScoreInformation o2) {
 
-            if (Integer.parseInt(o1.getScore()) < Integer.parseInt(o2.getScore()))
-                return 1;
-            else if (Integer.parseInt(o1.getScore()) > Integer.parseInt(o2.getScore()))
-                return -1;
-            else {
-                return Integer.compare(Integer.parseInt(o2.getRound()), Integer.parseInt(o1.getRound()));
+            if (o1.getScore() == o2.getScore()) {
+                return Integer.compare(o1.getScore(), o2.getScore());
             }
+            return Integer.compare(o1.getRound(), o2.getRound());
         }
     };
+
     private List<ScoreInformation> scoreList = new ArrayList<>();
     private ScoresAdapter mScoresAdapter;
 
@@ -145,7 +143,7 @@ public class GameOverActivity extends AppCompatActivity {
             String[] values;
             values = scoreInformation.split("_");
             if (values.length == 3) {
-                scoreList.add(new ScoreInformation(values[0], values[1], values[2]));
+                scoreList.add(new ScoreInformation(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2])));
             }
 
         }
@@ -202,12 +200,12 @@ public class GameOverActivity extends AppCompatActivity {
 
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            final String score = extras.getString("SCORE");
-            final String round = extras.getString("ROUND");
+            final int score = extras.getInt("SCORE");
+            final int round = extras.getInt("ROUND");
 
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
-            if (Integer.parseInt(score) > 0) {
+            if (score > 0) {
 
                 final EditText input = new EditText(GameOverActivity.this);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(

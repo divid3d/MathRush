@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void buttonsSetup(Button[] buttons, int whichButtonIsCorrect, int correctAnswer) {
 
-        Deque<Integer> otherAnswers = new ArrayDeque<Integer>();
+        Deque<Integer> otherAnswers = new ArrayDeque<>();
 
 
         while (otherAnswers.size() != 3) {
@@ -174,11 +174,11 @@ public class MainActivity extends AppCompatActivity {
         operationArray[2] = '*';
         operationArray[3] = ':';
 
-        mEquationBox = (TextView) findViewById(R.id.mEquationBox);
-        mRoundBox = (TextView) findViewById(R.id.mRoundBox);
-        mScoreBox = (TextView) findViewById(R.id.mScoreBox);
-        mTimeLeftTextView = (TextView) findViewById(R.id.mTimeLeftTextView);
-        mTimeLeftBar = (NumberProgressBar) findViewById(R.id.mTimeLeftBar);
+        mEquationBox = findViewById(R.id.mEquationBox);
+        mRoundBox = findViewById(R.id.mRoundBox);
+        mScoreBox = findViewById(R.id.mScoreBox);
+        mTimeLeftTextView = findViewById(R.id.mTimeLeftTextView);
+        mTimeLeftBar = findViewById(R.id.mTimeLeftBar);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
@@ -205,10 +205,10 @@ public class MainActivity extends AppCompatActivity {
         };
 
 
-        buttons[0] = (Button) findViewById(R.id.mAnswerButton1);
-        buttons[1] = (Button) findViewById(R.id.mAnswerButton2);
-        buttons[2] = (Button) findViewById(R.id.mAnswerButton3);
-        buttons[3] = (Button) findViewById(R.id.mAnswerButton4);
+        buttons[0] = findViewById(R.id.mAnswerButton1);
+        buttons[1] = findViewById(R.id.mAnswerButton2);
+        buttons[2] = findViewById(R.id.mAnswerButton3);
+        buttons[3] = findViewById(R.id.mAnswerButton4);
 
 
         correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
                         intent.putExtra("ROUND", Integer.toString(roundNumber));
-                        intent.putExtra("SCORE", Integer.toString(score));
+                        intent.putExtra("SCORE", score);
                         startActivity(intent);
                     }
 
