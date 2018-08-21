@@ -2,7 +2,6 @@ package com.example.divided.mathrush;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -43,7 +42,7 @@ public class GameOverActivity extends AppCompatActivity {
     Button mClearRanking;
     TextView mSummary;
     TextView mGameOver;
-    AnimationDrawable anim;
+   // AnimationDrawable anim;
     ConstraintLayout container;
     RecyclerView mRecyclerView;
     AlertDialog.Builder builder;
@@ -52,9 +51,12 @@ public class GameOverActivity extends AppCompatActivity {
         public int compare(ScoreInformation o1, ScoreInformation o2) {
 
             if (o1.getScore() == o2.getScore()) {
-                return Integer.compare(o1.getScore(), o2.getScore());
+                return Integer.compare(o2.getRound(), o1.getRound());
             }
-            return Integer.compare(o1.getRound(), o2.getRound());
+            else
+            {
+                return Integer.compare(o2.getScore(), o1.getScore());
+            }
         }
     };
 
@@ -121,9 +123,9 @@ public class GameOverActivity extends AppCompatActivity {
 
 
         container = findViewById(R.id.mGameOverLayout);
-        anim = (AnimationDrawable) container.getBackground();
-        anim.setEnterFadeDuration(6000);
-        anim.setExitFadeDuration(2000);
+       // anim = (AnimationDrawable) container.getBackground();
+        //anim.setEnterFadeDuration(6000);
+       // anim.setExitFadeDuration(2000);
         mRetryButton = findViewById(R.id.mRetryButton);
         mGameOver = findViewById(R.id.mGameOver);
         mQuitButton = findViewById(R.id.mQuitButton);
@@ -205,7 +207,9 @@ public class GameOverActivity extends AppCompatActivity {
 
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
+
             if (score > 0) {
+
 
                 final EditText input = new EditText(GameOverActivity.this);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
@@ -269,16 +273,16 @@ public class GameOverActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (anim != null && !anim.isRunning())
-            anim.start();
+        //if (anim != null && !anim.isRunning())
+        //    anim.start();
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (anim != null && anim.isRunning())
-            anim.stop();
+       // if (anim != null && anim.isRunning())
+        //    anim.stop();
     }
 
     @Override

@@ -37,9 +37,10 @@ public class StartGameActivity extends AppCompatActivity {
         mTitle = findViewById(R.id.mTitle);
         mStartButton = findViewById(R.id.mStartButton);
         mQuitButton = findViewById(R.id.mQuitButton2);
-        anim = (AnimationDrawable) container.getBackground();
-        anim.setEnterFadeDuration(6000);
-        anim.setExitFadeDuration(2000);
+
+        //anim = (AnimationDrawable) container.getBackground();
+        //anim.setEnterFadeDuration(6000);
+       // anim.setExitFadeDuration(2000);
 
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,14 +89,14 @@ public class StartGameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (anim != null && !anim.isRunning())
-            anim.start();
+       // if (anim != null && !anim.isRunning())
+       //     anim.start();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (anim != null && anim.isRunning())
-            anim.stop();
+       // if (anim != null && anim.isRunning())
+        //    anim.stop();
     }
 }

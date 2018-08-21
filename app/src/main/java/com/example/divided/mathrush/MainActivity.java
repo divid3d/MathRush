@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
@@ -21,8 +22,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     TextView mEquationBox;
-    TextView mScoreBox;
-    TextView mRoundBox;
+    TextSwitcher mScoreBox;
+    TextSwitcher mRoundBox;
     TextView mTimeLeftTextView;
 
     MediaPlayer correctAnswerPlayer;
@@ -94,11 +95,12 @@ public class MainActivity extends AppCompatActivity {
         }
         mEquationBox.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_instantly));
 
+
         Random randomGenerator = new Random();
         randomGenerator.setSeed(System.currentTimeMillis());
 
-        mRoundBox.setText("Round:\t" + Integer.toString(roundNumber));
-        mScoreBox.setText("Score:\t" + score);
+        mRoundBox.setText(Integer.toString(roundNumber));
+        mScoreBox.setText(Integer.toString(score));
 
         int correctAnswer = 0;
         int firstElement;
@@ -161,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
         mTimeLeftBar.setProgress(mTimeLeftBar.getMax());
         timeLeftCountDownTimer.start();
 
+
+
     }
 
     @Override
@@ -198,8 +202,8 @@ public class MainActivity extends AppCompatActivity {
                     vibrator.vibrate(vibrationPattern, -1);
                 }
                 Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                intent.putExtra("ROUND", Integer.toString(roundNumber));
-                intent.putExtra("SCORE", Integer.toString(score));
+                intent.putExtra("ROUND", roundNumber);
+                intent.putExtra("SCORE", score);
                 startActivity(intent);
             }
         };
@@ -242,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                        intent.putExtra("ROUND", Integer.toString(roundNumber));
+                        intent.putExtra("ROUND", roundNumber);
                         intent.putExtra("SCORE", score);
                         startActivity(intent);
                     }

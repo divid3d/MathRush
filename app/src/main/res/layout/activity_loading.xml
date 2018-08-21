@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/blue_lagoon"
     tools:context=".LoadingActivity">
 
     <com.wang.avi.AVLoadingIndicatorView
@@ -14,7 +15,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:indicatorColor="@android:color/black"
+        app:indicatorColor="@android:color/white"
         app:indicatorName="LineScalePulseOutIndicator"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -30,7 +31,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Start in... 3"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="50dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/mLoadingIndicator"
