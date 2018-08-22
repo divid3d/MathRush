@@ -6,6 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -35,6 +37,19 @@
 
     <style name="AppTheme.RedRipple">
         <item name="colorControlHighlight">#53ff0900</item>
+    </style>
+
+    <style name="HeaderBar">
+        <item name="android:background">#3b000000</item>
+    </style>
+
+    <style name="PreferenceSettings" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:colorAccent">#FFFFFF</item>
+        <item name="android:colorPrimary">#FFFFFF</item>
+        <item name="android:listDivider">@android:color/white</item>
+        <item name="android:dividerHeight">1dp</item>
+
     </style>
 
 </resources>

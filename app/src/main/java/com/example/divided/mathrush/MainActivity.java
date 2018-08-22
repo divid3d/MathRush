@@ -2,10 +2,12 @@ package com.example.divided.mathrush;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -48,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
     private char[] operationArray = new char[4];
     private int whichButtonIsCorrect = 0;
 
+    private boolean soundEnabled;
+    private boolean vibrationEnabled;
+
+    public void getSettings() {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
+        vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
+    }
 
     private int randomSign(boolean isPositive) {
         if (isPositive) {
@@ -169,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
         timeLeftCountDownTimer.start();
 
 
-
     }
 
     @Override
@@ -177,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSettings();
         //array initialize
         operationArray[0] = '+';
         operationArray[1] = '-';
@@ -196,12 +207,12 @@ public class MainActivity extends AppCompatActivity {
         timeLeftCountDownTimer = new CountDownTimer(5000, 10) {
 
             public void onTick(long millisUntilFinished) {
-                float percentage=0;
+                float percentage = 0;
                 timeLeft = (int) millisUntilFinished;
                 String firstWord = "Time remaining: ";
                 String secondWord = String.format("%.2f", (double) (millisUntilFinished / 1000.0)) + " s";
-                Spannable timeLeftText = new SpannableString(firstWord+secondWord);
-                timeLeftText.setSpan(new RelativeSizeSpan(1.2f),firstWord.length(),firstWord.length()+secondWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                Spannable timeLeftText = new SpannableString(firstWord + secondWord);
+                timeLeftText.setSpan(new RelativeSizeSpan(1.2f), firstWord.length(), firstWord.length() + secondWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 mTimeLeftTextView.setText(timeLeftText);
                 mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
 
@@ -210,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFinish() {
                 //mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", 0f) + " s");
                 mTimeLeftBar.setProgress(0);
-                if (vibrator.hasVibrator()) {
+                if (vibrator.hasVibrator() && vibrationEnabled) {
                     vibrator.vibrate(vibrationPattern, -1);
                 }
                 Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
@@ -227,9 +238,10 @@ public class MainActivity extends AppCompatActivity {
         buttons[3] = findViewById(R.id.mAnswerButton4);
 
 
-        correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
-        wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
-
+        if (soundEnabled) {
+            correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
+            wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
+        }
 
         for (int i = 0; i < buttons.length; i++) {
             final int indexOfButton = i + 1;
@@ -237,23 +249,27 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (whichButtonIsCorrect == indexOfButton) {
-                        correctAnswerPlayer.reset();
-                        wrongAnswerPlayer.reset();
-                        correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
-                        wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
-                        correctAnswerPlayer.start();
+                        if (soundEnabled) {
+                            correctAnswerPlayer.reset();
+                            wrongAnswerPlayer.reset();
+                            correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
+                            wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
+                            correctAnswerPlayer.start();
+                        }
                         roundNumber++;
                         score = score + (roundNumber * (timeLeft / 100));
                         timeLeftCountDownTimer.cancel();
                         roundInit(roundNumber);
                     } else {
-                        correctAnswerPlayer.reset();
-                        wrongAnswerPlayer.reset();
-                        correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
-                        wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
-                        wrongAnswerPlayer.start();
+                        if (soundEnabled) {
+                            correctAnswerPlayer.reset();
+                            wrongAnswerPlayer.reset();
+                            correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
+                            wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
+                            wrongAnswerPlayer.start();
+                        }
                         timeLeftCountDownTimer.cancel();
-                        if (vibrator.hasVibrator()) {
+                        if (vibrator.hasVibrator() && vibrationEnabled) {
                             vibrator.vibrate(1100);
                         }
 

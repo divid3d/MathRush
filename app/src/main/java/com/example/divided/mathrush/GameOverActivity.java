@@ -122,7 +122,7 @@ public class GameOverActivity extends AppCompatActivity {
 
         container = findViewById(R.id.mGameOverLayout);
         // anim = (AnimationDrawable) container.getBackground();
-        //anim.setEnterFadeDuration(6000);
+        // anim.setEnterFadeDuration(6000);
         // anim.setExitFadeDuration(2000);
         mRetryButton = findViewById(R.id.mRetryButton);
         mGameOver = findViewById(R.id.mGameOver);
@@ -259,6 +259,7 @@ public class GameOverActivity extends AppCompatActivity {
                         })
                         .setIcon(android.R.drawable.ic_dialog_info)
                         .setView(input);
+
 
                 AlertDialog dialog = builder.create();
                 dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
