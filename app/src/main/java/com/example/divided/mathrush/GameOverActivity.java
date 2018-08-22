@@ -42,7 +42,7 @@ public class GameOverActivity extends AppCompatActivity {
     Button mClearRanking;
     TextView mSummary;
     TextView mGameOver;
-   // AnimationDrawable anim;
+    // AnimationDrawable anim;
     ConstraintLayout container;
     RecyclerView mRecyclerView;
     AlertDialog.Builder builder;
@@ -52,9 +52,7 @@ public class GameOverActivity extends AppCompatActivity {
 
             if (o1.getScore() == o2.getScore()) {
                 return Integer.compare(o2.getRound(), o1.getRound());
-            }
-            else
-            {
+            } else {
                 return Integer.compare(o2.getScore(), o1.getScore());
             }
         }
@@ -123,9 +121,9 @@ public class GameOverActivity extends AppCompatActivity {
 
 
         container = findViewById(R.id.mGameOverLayout);
-       // anim = (AnimationDrawable) container.getBackground();
+        // anim = (AnimationDrawable) container.getBackground();
         //anim.setEnterFadeDuration(6000);
-       // anim.setExitFadeDuration(2000);
+        // anim.setExitFadeDuration(2000);
         mRetryButton = findViewById(R.id.mRetryButton);
         mGameOver = findViewById(R.id.mGameOver);
         mQuitButton = findViewById(R.id.mQuitButton);
@@ -247,8 +245,10 @@ public class GameOverActivity extends AppCompatActivity {
                                         };
 
                                 smoothScroller.setTargetPosition(indexOfScore);
-                                mRecyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
-
+                                mScoresAdapter.notifyDataSetChanged();
+                                mRecyclerView
+                                        .getLayoutManager()
+                                        .startSmoothScroll(smoothScroller);
 
                             }
                         })
@@ -281,7 +281,7 @@ public class GameOverActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-       // if (anim != null && anim.isRunning())
+        // if (anim != null && anim.isRunning())
         //    anim.stop();
     }
 

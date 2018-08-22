@@ -7,13 +7,18 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
+import com.robinhood.ticker.TickerUtils;
+import com.robinhood.ticker.TickerView;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -22,8 +27,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     TextView mEquationBox;
-    TextSwitcher mScoreBox;
-    TextSwitcher mRoundBox;
+    TickerView mScoreBox;
+    TickerView mRoundBox;
     TextView mTimeLeftTextView;
 
     MediaPlayer correctAnswerPlayer;
@@ -180,7 +185,9 @@ public class MainActivity extends AppCompatActivity {
 
         mEquationBox = findViewById(R.id.mEquationBox);
         mRoundBox = findViewById(R.id.mRoundBox);
+        mRoundBox.setCharacterLists(TickerUtils.provideNumberList());
         mScoreBox = findViewById(R.id.mScoreBox);
+        mScoreBox.setCharacterLists(TickerUtils.provideNumberList());
         mTimeLeftTextView = findViewById(R.id.mTimeLeftTextView);
         mTimeLeftBar = findViewById(R.id.mTimeLeftBar);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -189,14 +196,19 @@ public class MainActivity extends AppCompatActivity {
         timeLeftCountDownTimer = new CountDownTimer(5000, 10) {
 
             public void onTick(long millisUntilFinished) {
+                float percentage=0;
                 timeLeft = (int) millisUntilFinished;
-                mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", (double) (millisUntilFinished / 1000.0)) + " s");
+                String firstWord = "Time remaining: ";
+                String secondWord = String.format("%.2f", (double) (millisUntilFinished / 1000.0)) + " s";
+                Spannable timeLeftText = new SpannableString(firstWord+secondWord);
+                timeLeftText.setSpan(new RelativeSizeSpan(1.2f),firstWord.length(),firstWord.length()+secondWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                mTimeLeftTextView.setText(timeLeftText);
                 mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
 
             }
 
             public void onFinish() {
-                mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", 0f) + " s");
+                //mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", 0f) + " s");
                 mTimeLeftBar.setProgress(0);
                 if (vibrator.hasVibrator()) {
                     vibrator.vibrate(vibrationPattern, -1);

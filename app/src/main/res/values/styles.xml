@@ -29,4 +29,12 @@
         <item name="android:windowExitAnimation">@anim/fade_out</item>
     </style>
 
+    <style name="AppTheme.WhiteRipple">
+        <item name="colorControlHighlight">#71ffffff</item>
+    </style>
+
+    <style name="AppTheme.RedRipple">
+        <item name="colorControlHighlight">#53ff0900</item>
+    </style>
+
 </resources>

@@ -7,6 +7,11 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -21,6 +26,22 @@ public class StartGameActivity extends AppCompatActivity {
     ConstraintLayout container;
 
     View view;
+    private void setupTitle(){
+        String firstWord = "Math\n";
+        String secondWord = "Rush";
+        Spannable titleText = new SpannableString(firstWord+secondWord);
+        titleText.setSpan(
+                new RelativeSizeSpan(0.5f)
+                ,0
+                ,firstWord.length()
+                , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        titleText.setSpan(
+                new StyleSpan(android.graphics.Typeface.BOLD)
+                ,firstWord.length()
+                ,firstWord.length()+secondWord.length()
+                ,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mTitle.setText(titleText);
+    }
 
     private void quitGame() {
         moveTaskToBack(true);
@@ -35,10 +56,13 @@ public class StartGameActivity extends AppCompatActivity {
 
         container = findViewById(R.id.mStartGameLayout);
         mTitle = findViewById(R.id.mTitle);
+        setupTitle();
         mStartButton = findViewById(R.id.mStartButton);
         mQuitButton = findViewById(R.id.mQuitButton2);
 
-        //anim = (AnimationDrawable) container.getBackground();
+
+
+//anim = (AnimationDrawable) container.getBackground();
         //anim.setEnterFadeDuration(6000);
        // anim.setExitFadeDuration(2000);
 
