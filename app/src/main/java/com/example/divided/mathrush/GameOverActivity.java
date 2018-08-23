@@ -215,7 +215,8 @@ public class GameOverActivity extends AppCompatActivity {
                         LinearLayout.LayoutParams.MATCH_PARENT);
                 input.setLayoutParams(layoutParams);
 
-                builder = new AlertDialog.Builder(GameOverActivity.this);
+
+                builder = new AlertDialog.Builder(GameOverActivity.this, R.style.HighScoreDialogTheme);
 
                 builder.setTitle("Please enter your name")
                         .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -257,12 +258,13 @@ public class GameOverActivity extends AppCompatActivity {
 
                             }
                         })
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .setView(input);
+                        .setView(input)
+                        .setIcon(R.drawable.ic_round_fiber_new_24px);
 
 
                 AlertDialog dialog = builder.create();
                 dialog.getWindow().getAttributes().windowAnimations = R.style.DialogAnimation;
+
                 dialog.show();
 
             }

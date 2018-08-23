@@ -42,6 +42,7 @@ public class StartGameActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
+
     }
 
     private void setupTitle() {

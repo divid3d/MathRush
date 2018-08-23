@@ -52,12 +52,15 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean soundEnabled;
     private boolean vibrationEnabled;
+    private int gameDifficultyLevel;
 
     public void getSettings() {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
+        gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
+
     }
 
     private int randomSign(boolean isPositive) {
@@ -105,7 +108,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void roundInit(int roundNumber) {
+    private int resultOfOperation(char operation, int firstElement, int secondElement) {
+        int result;
+
+        switch (operation) {
+            case '+':
+                result = firstElement + secondElement;
+                break;
+            case '-':
+                result = firstElement - secondElement;
+                break;
+            case ':':
+                result = firstElement / secondElement;
+                break;
+            case '*':
+                result = firstElement * secondElement;
+                break;
+            default:
+                result = 0;
+                break;
+
+        }
+        return result;
+    }
+
+    private void roundInit(int roundNumber, int gameDifficultyLevel) {
         for (Button button : buttons) {
             button.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_instantly));
         }
@@ -121,18 +148,37 @@ public class MainActivity extends AppCompatActivity {
         int correctAnswer = 0;
         int firstElement;
         int secondElement;
+        int whichOperation;
 
-        int whichOperation = randomGenerator.nextInt(4);
+        if (gameDifficultyLevel == 1) {
+            whichOperation = randomGenerator.nextInt(2);
+        } else {
+            whichOperation = randomGenerator.nextInt(4);
+        }
 
         if (operationArray[whichOperation] == '*') {
 
-            firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
-
-            secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
+            if (gameDifficultyLevel == 1) {
+                do {
+                    firstElement = (randomGenerator.nextInt(20) + 1);
+                    secondElement = (randomGenerator.nextInt(20) + 1);
+                }
+                while (Math.abs(resultOfOperation(operationArray[whichOperation], firstElement, secondElement)) > 50);
+            } else {
+                firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
+                secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
+            }
         } else {
-            firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
-
-            secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
+            if (gameDifficultyLevel == 1) {
+                do {
+                    firstElement = (randomGenerator.nextInt(20) + 1);
+                    secondElement = (randomGenerator.nextInt(20) + 1);
+                }
+                while (Math.abs(resultOfOperation(operationArray[whichOperation], firstElement, secondElement)) > 50);
+            } else {
+                firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
+                secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
+            }
         }
 
 
@@ -259,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
                         roundNumber++;
                         score = score + (roundNumber * (timeLeft / 100));
                         timeLeftCountDownTimer.cancel();
-                        roundInit(roundNumber);
+                        roundInit(roundNumber, gameDifficultyLevel);
                     } else {
                         if (soundEnabled) {
                             correctAnswerPlayer.reset();
@@ -284,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        roundInit(roundNumber);
+        roundInit(roundNumber, gameDifficultyLevel);
     }
 
     @Override

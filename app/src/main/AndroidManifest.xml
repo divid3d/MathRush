@@ -40,7 +40,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".SettingsActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="Settings"
+            android:screenOrientation="portrait"
             android:theme="@style/PreferenceSettings"></activity>
     </application>
 

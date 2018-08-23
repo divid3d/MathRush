@@ -27,8 +27,8 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="DialogAnimation">
-        <item name="android:windowEnterAnimation">@anim/fade_in</item>
-        <item name="android:windowExitAnimation">@anim/fade_out</item>
+        <item name="android:windowEnterAnimation">@anim/fade_in_fast</item>
+        <item name="android:windowExitAnimation">@anim/fade_out_fast</item>
     </style>
 
     <style name="AppTheme.WhiteRipple">
@@ -43,13 +43,34 @@
         <item name="android:background">#3b000000</item>
     </style>
 
-    <style name="PreferenceSettings" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="PreferenceSettings" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:textColor">#FFFFFF</item>
         <item name="android:colorAccent">#FFFFFF</item>
         <item name="android:colorPrimary">#FFFFFF</item>
-        <item name="android:listDivider">@android:color/white</item>
-        <item name="android:dividerHeight">1dp</item>
-
+        <item name="android:divider">@android:color/white</item>
+        <item name="android:dividerHeight">2dp</item>
+        <item name="android:textColorSecondary">#beffffff</item>
+        <item name="colorControlHighlight">#4cffffff</item>
+        <item name="android:dialogTheme">@style/DifficultyLevelDialog</item>
+        <item name="android:alertDialogTheme">@style/DifficultyLevelDialog</item>
     </style>
+
+    <style name="HighScoreDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:colorAccent">#000000</item>
+    </style>
+
+    <style name="DifficultyLevelDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">#000000</item>
+        <item name="android:colorAccent">#000000</item>
+        <item name="android:colorPrimary">#000000</item>
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style>
+
+
+
 
 </resources>

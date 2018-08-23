@@ -1,5 +1,6 @@
 package com.example.divided.mathrush;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -10,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 public class SettingsActivity extends PreferenceActivity {
-
 
 
     private AppCompatDelegate mDelegate;
@@ -80,7 +80,8 @@ public class SettingsActivity extends PreferenceActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
-        SettingsActivity.this.overridePendingTransition(R.anim.fade_in,R.anim.fade_out);
+        Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
     }
 }
