@@ -43,7 +43,8 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="Settings"
             android:screenOrientation="portrait"
-            android:theme="@style/PreferenceSettings"></activity>
+            android:theme="@style/PreferenceSettings" />
+        <activity android:name=".test"></activity>
     </application>
 
 </manifest>

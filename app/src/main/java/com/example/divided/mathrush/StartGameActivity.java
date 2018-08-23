@@ -102,6 +102,7 @@ public class StartGameActivity extends AppCompatActivity {
 
         getSettings();
 
+
         container = findViewById(R.id.mStartGameLayout);
         mTitle = findViewById(R.id.mTitle);
         setupTitle();

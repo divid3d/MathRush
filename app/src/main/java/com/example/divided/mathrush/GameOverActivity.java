@@ -2,9 +2,11 @@ package com.example.divided.mathrush;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +20,10 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,6 +50,9 @@ public class GameOverActivity extends AppCompatActivity {
     ConstraintLayout container;
     RecyclerView mRecyclerView;
     AlertDialog.Builder builder;
+    ImageButton mNextDifficultyArrow;
+    ImageButton mPreviousDifficultyArrow;
+    TextView mDifficultyText;
     Comparator<ScoreInformation> myScoreComparator = new Comparator<ScoreInformation>() {
         @Override
         public int compare(ScoreInformation o1, ScoreInformation o2) {
@@ -57,14 +64,101 @@ public class GameOverActivity extends AppCompatActivity {
             }
         }
     };
-
+    private int difficultyPosition;
+    private boolean soundEnabled;
+    private boolean vibrationEnabled;
+    private int gameDifficultyLevel;
     private List<ScoreInformation> scoreList = new ArrayList<>();
     private ScoresAdapter mScoresAdapter;
+
+    public void getSettings() {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
+        vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
+        gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
+
+
+    }
 
     private void quitGame() {
         moveTaskToBack(true);
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
+    }
+
+    public void rankingPickerSetup() {
+
+        difficultyPosition = gameDifficultyLevel;
+        if (difficultyPosition == 1) {
+            mDifficultyText.setText("EASY");
+        } else if (difficultyPosition == 2) {
+            mDifficultyText.setText("MEDIUM");
+        } else {
+            mDifficultyText.setText("HARD");
+        }
+        mPreviousDifficultyArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.arrow_click_animation));
+                if (difficultyPosition - 1 < 1) {
+                    difficultyPosition = 1;
+                } else {
+                    difficultyPosition--;
+                    mScoresAdapter.notifyDataSetChanged();
+                }
+                if (difficultyPosition == 1) {
+                    mDifficultyText.setText("EASY");
+                    mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
+                    mPreviousDifficultyArrow.setEnabled(false);
+
+                } else if (difficultyPosition == 2) {
+
+                    if(!mNextDifficultyArrow.isEnabled()){
+                        mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
+                        mNextDifficultyArrow.setEnabled(true);
+                    }
+                    mDifficultyText.setText("MEDIUM");
+                } else {
+
+                    mDifficultyText.setText("HARD");
+                }
+                Toast.makeText(getApplicationContext(), "Position " + difficultyPosition, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        mNextDifficultyArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.arrow_click_animation));
+                if (difficultyPosition + 1 > 3) {
+                    difficultyPosition = 3;
+                } else {
+                    difficultyPosition++;
+                    scoreList.add(new ScoreInformation("testuje",1234,1234));
+                    mScoresAdapter.notifyDataSetChanged();
+                    mRecyclerView.getLayoutAnimation().start();
+
+
+                }
+                if (difficultyPosition == 1) {
+                    mDifficultyText.setText("EASY");
+                } else if (difficultyPosition == 2) {
+                    if(!mPreviousDifficultyArrow.isEnabled()){
+                        mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
+                        mPreviousDifficultyArrow.setEnabled(true);
+                    }
+                    mDifficultyText.setText("MEDIUM");
+                } else {
+                    mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
+                    mNextDifficultyArrow.setEnabled(false);
+                    mDifficultyText.setText("HARD");
+                }
+                Toast.makeText(getApplicationContext(), "Position: " + difficultyPosition, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
     }
 
     private void writeScoresToFile(String filename, String data, boolean append) {
@@ -119,13 +213,14 @@ public class GameOverActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_over);
 
+        getSettings();
 
         container = findViewById(R.id.mGameOverLayout);
-        // anim = (AnimationDrawable) container.getBackground();
-        // anim.setEnterFadeDuration(6000);
-        // anim.setExitFadeDuration(2000);
+        mPreviousDifficultyArrow = findViewById(R.id.mPreviousArrow);
+        mNextDifficultyArrow = findViewById(R.id.mNextArrow);
         mRetryButton = findViewById(R.id.mRetryButton);
         mGameOver = findViewById(R.id.mGameOver);
+        mDifficultyText = findViewById(R.id.mDiffucultyText);
         mQuitButton = findViewById(R.id.mQuitButton);
         mClearRanking = findViewById(R.id.mClearRanking);
         mSummary = findViewById(R.id.mSummary);
@@ -137,6 +232,8 @@ public class GameOverActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mScoresAdapter);
 
         mRetryButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulse_animation));
+
+        rankingPickerSetup();
 
 
         for (String scoreInformation : readScoresFromFile(FILE_NAME).split("\n")) {
@@ -170,9 +267,10 @@ public class GameOverActivity extends AppCompatActivity {
 
                 mRetryButton.setEnabled(false);
                 mQuitButton.setEnabled(false);
-                MediaPlayer startSoundPlayer = MediaPlayer.create(getApplicationContext(), R.raw.start_click_new);
-                startSoundPlayer.start();
-
+                if (soundEnabled) {
+                    MediaPlayer startSoundPlayer = MediaPlayer.create(getApplicationContext(), R.raw.start_click_new);
+                    startSoundPlayer.start();
+                }
                 CountDownTimer gameStartTimer = new CountDownTimer(1000, 1000) {
 
 
