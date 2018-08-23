@@ -165,8 +165,7 @@ public class StartGameActivity extends AppCompatActivity {
         mStartButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.start_button_animation));
         mTitle.startAnimation(AnimationUtils.loadAnimation(this, R.anim.title_text_animation));
         mQuitButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
-        mSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
-
+        mSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.settings_animation));
     }
 
     @Override

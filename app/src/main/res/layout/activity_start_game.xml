@@ -52,10 +52,12 @@
         android:layout_marginBottom="275dp"
         android:layout_marginTop="169dp"
         android:gravity="center"
-
         android:textColor="#FFFFFF"
         android:textSize="100sp"
-
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="0.01"
+        android:shadowDy="0.01"
+        android:shadowRadius="20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

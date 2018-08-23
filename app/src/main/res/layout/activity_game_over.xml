@@ -76,6 +76,10 @@
         android:textColor="@android:color/holo_red_dark"
         android:textSize="50dp"
         android:textStyle="bold"
+        android:shadowColor="#FFFFFF"
+        android:shadowDx="0.01"
+        android:shadowDy="0.01"
+        android:shadowRadius="20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
@@ -133,15 +137,26 @@
             android:scaleY="1.2"
             android:src="@drawable/difficulty_back_arrow" />
 
-        <TextView
+        <TextSwitcher
 
             android:id="@+id/mDiffucultyText"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:textColor="#FFFFFF" />
+            android:layout_marginRight="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#FFFFFF" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="#FFFFFF" />
+        </TextSwitcher>
 
         <ImageButton
             android:id="@+id/mNextArrow"

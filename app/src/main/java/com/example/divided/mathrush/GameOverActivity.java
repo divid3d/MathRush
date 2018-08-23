@@ -1,5 +1,8 @@
 package com.example.divided.mathrush;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,7 +56,7 @@ public class GameOverActivity extends AppCompatActivity {
     AlertDialog.Builder builder;
     ImageButton mNextDifficultyArrow;
     ImageButton mPreviousDifficultyArrow;
-    TextView mDifficultyText;
+    TextSwitcher mDifficultyText;
     Comparator<ScoreInformation> myScoreComparator = new Comparator<ScoreInformation>() {
         @Override
         public int compare(ScoreInformation o1, ScoreInformation o2) {
@@ -100,6 +104,9 @@ public class GameOverActivity extends AppCompatActivity {
         mPreviousDifficultyArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRecyclerView.scheduleLayoutAnimation();
+                mDifficultyText.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_left));
+                mDifficultyText.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
                 mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.arrow_click_animation));
                 if (difficultyPosition - 1 < 1) {
                     difficultyPosition = 1;
@@ -109,13 +116,13 @@ public class GameOverActivity extends AppCompatActivity {
                 }
                 if (difficultyPosition == 1) {
                     mDifficultyText.setText("EASY");
-                    mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
+                    mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                     mPreviousDifficultyArrow.setEnabled(false);
 
                 } else if (difficultyPosition == 2) {
 
-                    if(!mNextDifficultyArrow.isEnabled()){
-                        mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
+                    if (!mNextDifficultyArrow.isEnabled()) {
+                        mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
                         mNextDifficultyArrow.setEnabled(true);
                     }
                     mDifficultyText.setText("MEDIUM");
@@ -130,12 +137,15 @@ public class GameOverActivity extends AppCompatActivity {
         mNextDifficultyArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mRecyclerView.scheduleLayoutAnimation();
+                mDifficultyText.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right));
+                mDifficultyText.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
                 mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.arrow_click_animation));
                 if (difficultyPosition + 1 > 3) {
                     difficultyPosition = 3;
                 } else {
                     difficultyPosition++;
-                    scoreList.add(new ScoreInformation("testuje",1234,1234));
+                    scoreList.add(new ScoreInformation("testuje", 1234, 1234));
                     mScoresAdapter.notifyDataSetChanged();
                     mRecyclerView.getLayoutAnimation().start();
 
@@ -144,13 +154,13 @@ public class GameOverActivity extends AppCompatActivity {
                 if (difficultyPosition == 1) {
                     mDifficultyText.setText("EASY");
                 } else if (difficultyPosition == 2) {
-                    if(!mPreviousDifficultyArrow.isEnabled()){
-                        mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
+                    if (!mPreviousDifficultyArrow.isEnabled()) {
+                        mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
                         mPreviousDifficultyArrow.setEnabled(true);
                     }
                     mDifficultyText.setText("MEDIUM");
                 } else {
-                    mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
+                    mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                     mNextDifficultyArrow.setEnabled(false);
                     mDifficultyText.setText("HARD");
                 }
@@ -220,6 +230,23 @@ public class GameOverActivity extends AppCompatActivity {
         mNextDifficultyArrow = findViewById(R.id.mNextArrow);
         mRetryButton = findViewById(R.id.mRetryButton);
         mGameOver = findViewById(R.id.mGameOver);
+        ValueAnimator valueAnimator = ObjectAnimator.ofInt(
+                mGameOver, // Target object
+                "TextColor", // Property name
+                0xFFFF0000, // Value
+                0xFFFF6262 // Value
+        );
+
+        // Set value animator evaluator
+        valueAnimator.setEvaluator(new ArgbEvaluator());
+        // Set animation duration in milliseconds
+        valueAnimator.setDuration(3000);
+        // Animation repeat count and mode
+        valueAnimator.setRepeatCount(-1);
+        valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
+
+        // Finally, start the animation
+        valueAnimator.start();
         mDifficultyText = findViewById(R.id.mDiffucultyText);
         mQuitButton = findViewById(R.id.mQuitButton);
         mClearRanking = findViewById(R.id.mClearRanking);
