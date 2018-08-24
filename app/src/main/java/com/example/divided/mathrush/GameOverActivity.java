@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -18,6 +19,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -258,7 +260,36 @@ public class GameOverActivity extends AppCompatActivity {
         mScoresAdapter = new ScoresAdapter(scoreList);
         mRecyclerView.setAdapter(mScoresAdapter);
 
-        mRetryButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulse_animation));
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+                if (direction == ItemTouchHelper.LEFT) {
+                    if (difficultyPosition < 3) {
+                        mNextDifficultyArrow.callOnClick();
+                    }
+                } else {
+                    if (difficultyPosition > 1) {
+                        mPreviousDifficultyArrow.callOnClick();
+                    }
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(null);
+        itemTouchHelper.attachToRecyclerView(mRecyclerView);
+
 
         rankingPickerSetup();
 
