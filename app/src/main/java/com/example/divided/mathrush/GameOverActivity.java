@@ -29,7 +29,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -40,25 +39,27 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 
 public class GameOverActivity extends AppCompatActivity {
 
 
-    final String FILE_NAME = "Scores";
+    final String EASY_SCORES_FILENAME = "EASY_SCORES";
+    final String MEDIUM_SCORES_FILENAME = "MEDIUM_SCORES";
+    final String HARD_SCORES_FILENAME = "HARD_SCORES";
+
     Button mRetryButton;
     Button mQuitButton;
     Button mClearRanking;
     TextView mSummary;
     TextView mGameOver;
-    // AnimationDrawable anim;
     ConstraintLayout container;
     RecyclerView mRecyclerView;
     AlertDialog.Builder builder;
     ImageButton mNextDifficultyArrow;
     ImageButton mPreviousDifficultyArrow;
     TextSwitcher mDifficultyText;
+
     Comparator<ScoreInformation> myScoreComparator = new Comparator<ScoreInformation>() {
         @Override
         public int compare(ScoreInformation o1, ScoreInformation o2) {
@@ -74,8 +75,42 @@ public class GameOverActivity extends AppCompatActivity {
     private boolean soundEnabled;
     private boolean vibrationEnabled;
     private int gameDifficultyLevel;
-    private List<ScoreInformation> scoreList = new ArrayList<>();
-    private ScoresAdapter mScoresAdapter;
+
+    private ArrayList<ScoreInformation>[] scoreLists = (ArrayList<ScoreInformation>[]) new ArrayList[3];
+
+    private ScoresAdapter easyScoresAdapter;
+    private ScoresAdapter mediumScoresAdapter;
+    private ScoresAdapter hardScoresAdapter;
+
+    private ScoresAdapter adapterPicker(int difficultyPosition) {
+        if (difficultyPosition == 1) {
+            return easyScoresAdapter;
+        } else if (difficultyPosition == 2) {
+            return mediumScoresAdapter;
+        } else {
+            return hardScoresAdapter;
+        }
+    }
+
+    public void loadScoresToLists(ArrayList<ScoreInformation>[] scoreLists) {
+        for (int i = 0; i < scoreLists.length; i++) {
+            if (scoreLists[i] != null) {
+                scoreLists[i].clear();
+            }
+            for (String scoreInformation : readScoresFromFile(filenamePicker(i + 1)).split("\n")) {
+                String[] values;
+                values = scoreInformation.split("_");
+                if (values.length == 3) {
+                    scoreLists[i].add(new ScoreInformation(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2])));
+                }
+
+            }
+            if (scoreLists[i] != null) {
+                Collections.sort(scoreLists[i], myScoreComparator);
+            }
+        }
+
+    }
 
     public void getSettings() {
 
@@ -85,6 +120,16 @@ public class GameOverActivity extends AppCompatActivity {
         gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
 
 
+    }
+
+    public String filenamePicker(int difficultyPosition) {
+        if (difficultyPosition == 1) {
+            return EASY_SCORES_FILENAME;
+        } else if (difficultyPosition == 2) {
+            return MEDIUM_SCORES_FILENAME;
+        } else {
+            return HARD_SCORES_FILENAME;
+        }
     }
 
     private void quitGame() {
@@ -103,18 +148,31 @@ public class GameOverActivity extends AppCompatActivity {
         } else {
             mDifficultyText.setText("HARD");
         }
+
         mPreviousDifficultyArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRecyclerView.scheduleLayoutAnimation();
+
+
                 mDifficultyText.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_left));
                 mDifficultyText.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.slide_out_right));
                 mPreviousDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.arrow_click_animation));
                 if (difficultyPosition - 1 < 1) {
                     difficultyPosition = 1;
                 } else {
+                    mRecyclerView.scheduleLayoutAnimation();
                     difficultyPosition--;
-                    mScoresAdapter.notifyDataSetChanged();
+                    if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
+                        mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
+                        mClearRanking.setEnabled(true);
+                        mRecyclerView.setEnabled(true);
+                    } else if (scoreLists[difficultyPosition - 1].isEmpty()) {
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
+                        mClearRanking.setEnabled(false);
+                    }
+                    mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
+                    adapterPicker(difficultyPosition).notifyDataSetChanged();
                 }
                 if (difficultyPosition == 1) {
                     mDifficultyText.setText("EASY");
@@ -132,23 +190,31 @@ public class GameOverActivity extends AppCompatActivity {
 
                     mDifficultyText.setText("HARD");
                 }
-                Toast.makeText(getApplicationContext(), "Position " + difficultyPosition, Toast.LENGTH_SHORT).show();
             }
         });
 
         mNextDifficultyArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRecyclerView.scheduleLayoutAnimation();
                 mDifficultyText.setInAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_in_right));
                 mDifficultyText.setOutAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide_out_left));
                 mNextDifficultyArrow.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.arrow_click_animation));
                 if (difficultyPosition + 1 > 3) {
                     difficultyPosition = 3;
                 } else {
+                    mRecyclerView.scheduleLayoutAnimation();
                     difficultyPosition++;
-                    scoreList.add(new ScoreInformation("testuje", 1234, 1234));
-                    mScoresAdapter.notifyDataSetChanged();
+                    if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
+                        mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
+                        mClearRanking.setEnabled(true);
+                        mRecyclerView.setEnabled(true);
+                    } else if (scoreLists[difficultyPosition - 1].isEmpty()) {
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
+                        mClearRanking.setEnabled(false);
+                    }
+                    mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
+                    adapterPicker(difficultyPosition).notifyDataSetChanged();
                     mRecyclerView.getLayoutAnimation().start();
 
 
@@ -166,7 +232,6 @@ public class GameOverActivity extends AppCompatActivity {
                     mNextDifficultyArrow.setEnabled(false);
                     mDifficultyText.setText("HARD");
                 }
-                Toast.makeText(getApplicationContext(), "Position: " + difficultyPosition, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -209,8 +274,11 @@ public class GameOverActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e("READ_FILE", "Unable to read " + filename + " file.");
             }
+        } else {
+            return "";
         }
         return outputString;
+
     }
 
     private void clearRanking(String filename) {
@@ -226,6 +294,9 @@ public class GameOverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_over);
 
         getSettings();
+        for (int i = 0; i < 3; i++) {
+            scoreLists[i] = new ArrayList<ScoreInformation>();
+        }
 
         container = findViewById(R.id.mGameOverLayout);
         mPreviousDifficultyArrow = findViewById(R.id.mPreviousArrow);
@@ -239,16 +310,12 @@ public class GameOverActivity extends AppCompatActivity {
                 0xFFFF6262 // Value
         );
 
-        // Set value animator evaluator
         valueAnimator.setEvaluator(new ArgbEvaluator());
-        // Set animation duration in milliseconds
         valueAnimator.setDuration(3000);
-        // Animation repeat count and mode
         valueAnimator.setRepeatCount(-1);
         valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
-
-        // Finally, start the animation
         valueAnimator.start();
+
         mDifficultyText = findViewById(R.id.mDiffucultyText);
         mQuitButton = findViewById(R.id.mQuitButton);
         mClearRanking = findViewById(R.id.mClearRanking);
@@ -257,8 +324,10 @@ public class GameOverActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
-        mScoresAdapter = new ScoresAdapter(scoreList);
-        mRecyclerView.setAdapter(mScoresAdapter);
+
+        easyScoresAdapter = new ScoresAdapter(scoreLists[0]);
+        mediumScoresAdapter = new ScoresAdapter(scoreLists[1]);
+        hardScoresAdapter = new ScoresAdapter(scoreLists[2]);
 
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -268,18 +337,18 @@ public class GameOverActivity extends AppCompatActivity {
 
             @Override
             public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-                
+
             }
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
                 if (direction == ItemTouchHelper.LEFT) {
-                    if (difficultyPosition < 3) {
+                    if (mNextDifficultyArrow.isEnabled()) {
                         mNextDifficultyArrow.callOnClick();
                     }
                 } else {
-                    if (difficultyPosition > 1) {
+                    if (mPreviousDifficultyArrow.isEnabled()) {
                         mPreviousDifficultyArrow.callOnClick();
                     }
                 }
@@ -294,23 +363,16 @@ public class GameOverActivity extends AppCompatActivity {
         rankingPickerSetup();
 
 
-        for (String scoreInformation : readScoresFromFile(FILE_NAME).split("\n")) {
-            String[] values;
-            values = scoreInformation.split("_");
-            if (values.length == 3) {
-                scoreList.add(new ScoreInformation(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2])));
-            }
-
-        }
-
-        Collections.sort(scoreList, myScoreComparator);
-        mScoresAdapter.notifyDataSetChanged();
+        loadScoresToLists(scoreLists);
+        mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
+        adapterPicker(difficultyPosition).notifyDataSetChanged();
 
         mClearRanking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearRanking(FILE_NAME);
-                scoreList.clear();
+                clearRanking(filenamePicker(difficultyPosition));
+
+                scoreLists[difficultyPosition - 1].clear();
 
                 mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
@@ -383,13 +445,16 @@ public class GameOverActivity extends AppCompatActivity {
                                     name = input.getText().toString();
                                 }
 
-                                writeScoresToFile(FILE_NAME, name + "_" + round + "_" + score, true);
+                                writeScoresToFile(filenamePicker(difficultyPosition), name + "_" + round + "_" + score, true);
 
                                 final ScoreInformation newScore = new ScoreInformation(name, round, score);
-                                scoreList.add(newScore);
-                                Collections.sort(scoreList, myScoreComparator);
-                                mScoresAdapter.notifyDataSetChanged();
-                                final int indexOfScore = scoreList.indexOf(newScore);
+                                scoreLists[difficultyPosition - 1].add(newScore);
+                                if (scoreLists[difficultyPosition - 1] != null) {
+                                    Collections.sort(scoreLists[difficultyPosition - 1], myScoreComparator);
+                                }
+                                mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
+                                adapterPicker(difficultyPosition).notifyDataSetChanged();
+                                final int indexOfScore = scoreLists[difficultyPosition - 1].indexOf(newScore);
                                 //Toast.makeText(getApplicationContext(),Integer.toString(indexOfScore),Toast.LENGTH_LONG).show();
                                 mSummary.append("\nYou took " + (indexOfScore + 1) + " place!");
 
@@ -402,7 +467,7 @@ public class GameOverActivity extends AppCompatActivity {
                                         };
 
                                 smoothScroller.setTargetPosition(indexOfScore);
-                                mScoresAdapter.notifyDataSetChanged();
+                                adapterPicker(difficultyPosition).notifyDataSetChanged();
                                 mRecyclerView
                                         .getLayoutManager()
                                         .startSmoothScroll(smoothScroller);
