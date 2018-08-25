@@ -73,7 +73,6 @@ public class GameOverActivity extends AppCompatActivity {
     };
     private int difficultyPosition;
     private boolean soundEnabled;
-    private boolean vibrationEnabled;
     private int gameDifficultyLevel;
 
     private ArrayList<ScoreInformation>[] scoreLists = (ArrayList<ScoreInformation>[]) new ArrayList[3];
@@ -116,7 +115,6 @@ public class GameOverActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
-        vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
         gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
 
 
@@ -162,15 +160,21 @@ public class GameOverActivity extends AppCompatActivity {
                 } else {
                     mRecyclerView.scheduleLayoutAnimation();
                     difficultyPosition--;
-                    if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
+                    if(scoreLists[difficultyPosition-1].isEmpty() && mClearRanking.isEnabled()){
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
+                        mClearRanking.setEnabled(false);
+                    }
+                    else if(!scoreLists[difficultyPosition-1].isEmpty() && !mClearRanking.isEnabled()){
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
+                        mClearRanking.setEnabled(true);
+                    }
+                    /*if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
                         mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
                         mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
                         mClearRanking.setEnabled(true);
-                        mRecyclerView.setEnabled(true);
-                    } else if (scoreLists[difficultyPosition - 1].isEmpty()) {
+                    } else {
                         mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-                        mClearRanking.setEnabled(false);
-                    }
+                    }*/
                     mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
                     adapterPicker(difficultyPosition).notifyDataSetChanged();
                 }
@@ -204,15 +208,22 @@ public class GameOverActivity extends AppCompatActivity {
                 } else {
                     mRecyclerView.scheduleLayoutAnimation();
                     difficultyPosition++;
-                    if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
+
+                    if(scoreLists[difficultyPosition-1].isEmpty() && mClearRanking.isEnabled()){
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
+                        mClearRanking.setEnabled(false);
+                    }
+                    else if(!scoreLists[difficultyPosition-1].isEmpty() && !mClearRanking.isEnabled()){
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
+                        mClearRanking.setEnabled(true);
+                    }
+                    /*if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
                         mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
                         mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
                         mClearRanking.setEnabled(true);
-                        mRecyclerView.setEnabled(true);
-                    } else if (scoreLists[difficultyPosition - 1].isEmpty()) {
+                    } else {
                         mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-                        mClearRanking.setEnabled(false);
-                    }
+                    }*/
                     mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
                     adapterPicker(difficultyPosition).notifyDataSetChanged();
                     mRecyclerView.getLayoutAnimation().start();
@@ -294,8 +305,9 @@ public class GameOverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_over);
 
         getSettings();
+
         for (int i = 0; i < 3; i++) {
-            scoreLists[i] = new ArrayList<ScoreInformation>();
+            scoreLists[i] = new ArrayList<>();
         }
 
         container = findViewById(R.id.mGameOverLayout);
@@ -377,7 +389,6 @@ public class GameOverActivity extends AppCompatActivity {
                 mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mClearRanking.setEnabled(false);
-                mRecyclerView.setEnabled(false);
             }
         });
 
@@ -400,6 +411,7 @@ public class GameOverActivity extends AppCompatActivity {
                     public void onFinish() {
                         Intent intent = new Intent(getBaseContext(), LoadingActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        finish();
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
                     }

@@ -44,7 +44,8 @@
             android:label="Settings"
             android:screenOrientation="portrait"
             android:theme="@style/PreferenceSettings" />
-        <activity android:name=".test"></activity>
+        <activity android:name=".test" />
+        <activity android:name=".LeaderboardActivity"></activity>
     </application>
 
 </manifest>

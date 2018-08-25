@@ -20,10 +20,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.robinhood.ticker.TickerView
-
         android:id="@+id/mCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/product_sans_bold"
         android:textColor="@android:color/white"
         android:textSize="200dp"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -30,6 +30,7 @@ public class StartGameActivity extends AppCompatActivity {
     Button mStartButton;
     Button mQuitButton;
     ImageButton mSettings;
+    ImageButton mLeaderboard;
     TextView mTitle;
     AnimationDrawable anim;
     ConstraintLayout container;
@@ -109,11 +110,7 @@ public class StartGameActivity extends AppCompatActivity {
         mStartButton = findViewById(R.id.mStartButton);
         mQuitButton = findViewById(R.id.mQuitButton2);
         mSettings = findViewById(R.id.mSettings);
-
-
-//anim = (AnimationDrawable) container.getBackground();
-        //anim.setEnterFadeDuration(6000);
-        // anim.setExitFadeDuration(2000);
+        mLeaderboard = findViewById(R.id.mLeaderboard);
 
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,32 +158,36 @@ public class StartGameActivity extends AppCompatActivity {
             }
         });
 
+        mLeaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LeaderboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
 
         mStartButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.start_button_animation));
         mTitle.startAnimation(AnimationUtils.loadAnimation(this, R.anim.title_text_animation));
         mQuitButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
         mSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.settings_animation));
+        mLeaderboard.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-       /* mTitle.getAnimation().start();
-        mStartButton.getAnimation().start();
-        */
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        /*if(mTitle.getAnimation()!=null){
-            mTitle.getAnimation().
-        }
 
-        if(mStartButton.getAnimation()!=null){
-            mTitle.getAnimation().cancel();
-        }*/
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        quitGame();
     }
 }

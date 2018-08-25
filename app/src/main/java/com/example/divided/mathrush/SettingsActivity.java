@@ -133,6 +133,7 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     public void onBackPressed() {
         Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
+        finish();
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
     }
