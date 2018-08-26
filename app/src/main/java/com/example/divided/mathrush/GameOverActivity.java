@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -160,21 +161,13 @@ public class GameOverActivity extends AppCompatActivity {
                 } else {
                     mRecyclerView.scheduleLayoutAnimation();
                     difficultyPosition--;
-                    if(scoreLists[difficultyPosition-1].isEmpty() && mClearRanking.isEnabled()){
-                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
-                        mClearRanking.setEnabled(false);
-                    }
-                    else if(!scoreLists[difficultyPosition-1].isEmpty() && !mClearRanking.isEnabled()){
-                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
-                        mClearRanking.setEnabled(true);
-                    }
-                    /*if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
-                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
-                        mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
-                        mClearRanking.setEnabled(true);
-                    } else {
+                    if (scoreLists[difficultyPosition - 1].isEmpty() && mClearRanking.isEnabled()) {
                         mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-                    }*/
+                        mClearRanking.setEnabled(false);
+                    } else if (!scoreLists[difficultyPosition - 1].isEmpty() && !mClearRanking.isEnabled()) {
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
+                        mClearRanking.setEnabled(true);
+                    }
                     mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
                     adapterPicker(difficultyPosition).notifyDataSetChanged();
                 }
@@ -209,26 +202,16 @@ public class GameOverActivity extends AppCompatActivity {
                     mRecyclerView.scheduleLayoutAnimation();
                     difficultyPosition++;
 
-                    if(scoreLists[difficultyPosition-1].isEmpty() && mClearRanking.isEnabled()){
-                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_out));
-                        mClearRanking.setEnabled(false);
-                    }
-                    else if(!scoreLists[difficultyPosition-1].isEmpty() && !mClearRanking.isEnabled()){
-                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fade_in));
-                        mClearRanking.setEnabled(true);
-                    }
-                    /*if (!mClearRanking.isEnabled() && !scoreLists[difficultyPosition - 1].isEmpty()) {
-                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
-                        mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in_fast));
-                        mClearRanking.setEnabled(true);
-                    } else {
+                    if (scoreLists[difficultyPosition - 1].isEmpty() && mClearRanking.isEnabled()) {
                         mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-                    }*/
+                        mClearRanking.setEnabled(false);
+                    } else if (!scoreLists[difficultyPosition - 1].isEmpty() && !mClearRanking.isEnabled()) {
+                        mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in));
+                        mClearRanking.setEnabled(true);
+                    }
                     mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
                     adapterPicker(difficultyPosition).notifyDataSetChanged();
                     mRecyclerView.getLayoutAnimation().start();
-
-
                 }
                 if (difficultyPosition == 1) {
                     mDifficultyText.setText("EASY");
@@ -314,6 +297,7 @@ public class GameOverActivity extends AppCompatActivity {
         mPreviousDifficultyArrow = findViewById(R.id.mPreviousArrow);
         mNextDifficultyArrow = findViewById(R.id.mNextArrow);
         mRetryButton = findViewById(R.id.mRetryButton);
+        mRetryButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulse_animation));
         mGameOver = findViewById(R.id.mGameOver);
         ValueAnimator valueAnimator = ObjectAnimator.ofInt(
                 mGameOver, // Target object
@@ -335,7 +319,10 @@ public class GameOverActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.mScoreView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL));
+
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.score_divider));
+        mRecyclerView.addItemDecoration(itemDecorator);
 
         easyScoresAdapter = new ScoresAdapter(scoreLists[0]);
         mediumScoresAdapter = new ScoresAdapter(scoreLists[1]);
@@ -466,6 +453,7 @@ public class GameOverActivity extends AppCompatActivity {
                                 }
                                 mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
                                 adapterPicker(difficultyPosition).notifyDataSetChanged();
+                                mRecyclerView.scheduleLayoutAnimation();
                                 final int indexOfScore = scoreLists[difficultyPosition - 1].indexOf(newScore);
                                 //Toast.makeText(getApplicationContext(),Integer.toString(indexOfScore),Toast.LENGTH_LONG).show();
                                 mSummary.append("\nYou took " + (indexOfScore + 1) + " place!");

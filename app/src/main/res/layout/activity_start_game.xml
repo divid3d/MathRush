@@ -79,20 +79,23 @@
         android:src="@drawable/ic_round_settings_24px"
         android:theme="@style/AppTheme.WhiteRipple"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <ImageButton
         android:id="@+id/mLeaderboard"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="24dp"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="TODO"
         android:scaleX="1.5"
         android:scaleY="1.5"
         android:src="@drawable/ic_leaderboard_icon"
         android:theme="@style/AppTheme.WhiteRipple"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mSettings" />
+        app:layout_constraintEnd_toEndOf="@+id/mSettings"
+        app:layout_constraintStart_toStartOf="@+id/mSettings"
+        app:layout_constraintTop_toBottomOf="@+id/mSettings"
+        tools:ignore="ContentDescription" />
 
 </android.support.constraint.ConstraintLayout>
