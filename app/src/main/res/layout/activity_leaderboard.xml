@@ -18,6 +18,7 @@
         android:drawableEnd="@android:drawable/ic_menu_delete"
         android:fontFamily="@font/product_sans_regular"
         android:foreground="?attr/selectableItemBackground"
+        android:soundEffectsEnabled="false"
         android:text="Clear"
         android:textColor="#FFFFFF"
         android:theme="@style/AppTheme.WhiteRipple"
@@ -35,6 +36,7 @@
         android:background="@drawable/button"
         android:fontFamily="@font/product_sans_regular"
         android:foreground="?attr/selectableItemBackground"
+        android:soundEffectsEnabled="false"
         android:text="Back"
         android:textColor="#FFFFFF"
         android:theme="@style/AppTheme.WhiteRipple"
@@ -58,6 +60,7 @@
             android:background="@android:color/transparent"
             android:scaleX="1.2"
             android:scaleY="1.2"
+            android:soundEffectsEnabled="false"
             android:src="@drawable/difficulty_back_arrow" />
 
         <TextSwitcher
@@ -94,6 +97,7 @@
             android:rotation="180"
             android:scaleX="1.2"
             android:scaleY="1.2"
+            android:soundEffectsEnabled="false"
             android:src="@drawable/difficulty_back_arrow" />
 
     </LinearLayout>

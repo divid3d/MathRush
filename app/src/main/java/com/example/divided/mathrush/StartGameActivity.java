@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -35,8 +37,126 @@ public class StartGameActivity extends AppCompatActivity {
     AnimationDrawable anim;
     ConstraintLayout container;
     View view;
+    SoundPool mySoundPool;
+    int soundIds[] = new int[3];
     private boolean soundEnabled;
     private boolean vibrationEnabled;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_start_game);
+
+        getSettings();
+        soundEffectsSetup();
+
+        container = findViewById(R.id.mStartGameLayout);
+        mTitle = findViewById(R.id.mTitle);
+        setupTitle();
+        mStartButton = findViewById(R.id.mStartButton);
+        mQuitButton = findViewById(R.id.mQuitButton2);
+        mSettings = findViewById(R.id.mSettings);
+        mLeaderboard = findViewById(R.id.mLeaderboard);
+
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mStartButton.setEnabled(false);
+                mQuitButton.setEnabled(false);
+
+                if (soundEnabled == true) {
+                    mySoundPool.play(soundIds[0], 1, 1, 1, 0, 1.0f);
+                }
+
+                final CountDownTimer gameStartTimer = new CountDownTimer(1000, 1000) {
+
+
+                    public void onTick(long millisUntilFinished) {
+                    }
+
+                    public void onFinish() {
+                        Intent intent = new Intent(getBaseContext(), LoadingActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                    }
+                };
+                gameStartTimer.start();
+            }
+        });
+
+        mQuitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                quitGame();
+            }
+        });
+
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (soundEnabled == true) {
+                    mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
+                }
+                Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
+
+        mLeaderboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (soundEnabled == true) {
+                    mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
+                }
+                Intent intent = new Intent(getApplicationContext(), LeaderboardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+            }
+        });
+
+        mStartButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.start_button_animation));
+        mTitle.startAnimation(AnimationUtils.loadAnimation(this, R.anim.title_text_animation));
+        mQuitButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
+        mSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.settings_animation));
+        mLeaderboard.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        quitGame();
+    }
+
+    public void soundEffectsSetup() {
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        mySoundPool = new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build();
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        soundIds[0] = mySoundPool.load(this, R.raw.start_click_new, 1);
+        soundIds[1] = mySoundPool.load(this, R.raw.tick_effect, 1);
+    }
 
     public void getSettings() {
 
@@ -83,9 +203,7 @@ public class StartGameActivity extends AppCompatActivity {
                 , firstWord.length()
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-
-        //mTitle.setShadowLayer(1.6f,1.5f,1.3f,Color.WHITE);
-
+        
         mTitle.setText(titleText);
 
     }
@@ -94,100 +212,5 @@ public class StartGameActivity extends AppCompatActivity {
         moveTaskToBack(true);
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(1);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_game);
-
-        getSettings();
-
-
-        container = findViewById(R.id.mStartGameLayout);
-        mTitle = findViewById(R.id.mTitle);
-        setupTitle();
-        mStartButton = findViewById(R.id.mStartButton);
-        mQuitButton = findViewById(R.id.mQuitButton2);
-        mSettings = findViewById(R.id.mSettings);
-        mLeaderboard = findViewById(R.id.mLeaderboard);
-
-        mStartButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                mStartButton.setEnabled(false);
-                mQuitButton.setEnabled(false);
-
-                if (soundEnabled == true) {
-                    MediaPlayer startSoundPlayer = MediaPlayer.create(getApplicationContext(), R.raw.start_click_new);
-                    startSoundPlayer.start();
-                }
-
-                final CountDownTimer gameStartTimer = new CountDownTimer(1000, 1000) {
-
-
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    public void onFinish() {
-                        Intent intent = new Intent(getBaseContext(), LoadingActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-                    }
-                };
-                gameStartTimer.start();
-            }
-        });
-
-        mQuitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                quitGame();
-            }
-        });
-
-        mSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }
-        });
-
-        mLeaderboard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LeaderboardActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
-            }
-        });
-
-        mStartButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.start_button_animation));
-        mTitle.startAnimation(AnimationUtils.loadAnimation(this, R.anim.title_text_animation));
-        mQuitButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
-        mSettings.startAnimation(AnimationUtils.loadAnimation(this, R.anim.settings_animation));
-        mLeaderboard.startAnimation(AnimationUtils.loadAnimation(this, R.anim.quit_button_animation));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        quitGame();
     }
 }

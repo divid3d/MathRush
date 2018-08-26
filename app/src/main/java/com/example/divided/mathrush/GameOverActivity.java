@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
-import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -60,7 +62,6 @@ public class GameOverActivity extends AppCompatActivity {
     ImageButton mNextDifficultyArrow;
     ImageButton mPreviousDifficultyArrow;
     TextSwitcher mDifficultyText;
-
     Comparator<ScoreInformation> myScoreComparator = new Comparator<ScoreInformation>() {
         @Override
         public int compare(ScoreInformation o1, ScoreInformation o2) {
@@ -72,6 +73,8 @@ public class GameOverActivity extends AppCompatActivity {
             }
         }
     };
+    private SoundPool mySoundPool;
+    private int soundIds[] = new int[3];
     private int difficultyPosition;
     private boolean soundEnabled;
     private int gameDifficultyLevel;
@@ -288,6 +291,7 @@ public class GameOverActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game_over);
 
         getSettings();
+        soundEffectsSetup();
 
         for (int i = 0; i < 3; i++) {
             scoreLists[i] = new ArrayList<>();
@@ -386,8 +390,8 @@ public class GameOverActivity extends AppCompatActivity {
                 mRetryButton.setEnabled(false);
                 mQuitButton.setEnabled(false);
                 if (soundEnabled) {
-                    MediaPlayer startSoundPlayer = MediaPlayer.create(getApplicationContext(), R.raw.start_click_new);
-                    startSoundPlayer.start();
+                    mySoundPool.play(soundIds[2], 1, 1, 1, 0, 1.0f);
+
                 }
                 CountDownTimer gameStartTimer = new CountDownTimer(1000, 1000) {
 
@@ -492,6 +496,23 @@ public class GameOverActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    public void soundEffectsSetup() {
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        mySoundPool = new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build();
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
+        soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
+        soundIds[2] = mySoundPool.load(this, R.raw.start_click_new, 1);
     }
 
     @Override

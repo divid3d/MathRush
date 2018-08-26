@@ -3,7 +3,9 @@ package com.example.divided.mathrush;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Vibrator;
@@ -33,26 +35,39 @@ public class MainActivity extends AppCompatActivity {
     TickerView mRoundBox;
     TextView mTimeLeftTextView;
 
-    MediaPlayer correctAnswerPlayer;
-    MediaPlayer wrongAnswerPlayer;
+    SoundPool mySoundPool;
     Vibrator vibrator;
     long[] vibrationPattern = {0, 100, 100, 500};
 
     Button[] buttons = new Button[4];
 
     CountDownTimer timeLeftCountDownTimer;
+    int soundIds[] = new int[2];
     private NumberProgressBar mTimeLeftBar;
-
     private int roundNumber = 1;
     private int score = 0;
     private int timeLeft = 0;
-
     private char[] operationArray = new char[4];
     private int whichButtonIsCorrect = 0;
-
     private boolean soundEnabled;
     private boolean vibrationEnabled;
     private int gameDifficultyLevel;
+
+    public void soundEffectsSetup() {
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        mySoundPool = new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build();
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
+        soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
+    }
 
     public void getSettings() {
 
@@ -234,6 +249,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getSettings();
+        soundEffectsSetup();
+
         //array initialize
         operationArray[0] = '+';
         operationArray[1] = '-';
@@ -277,17 +294,11 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-
         buttons[0] = findViewById(R.id.mAnswerButton1);
         buttons[1] = findViewById(R.id.mAnswerButton2);
         buttons[2] = findViewById(R.id.mAnswerButton3);
         buttons[3] = findViewById(R.id.mAnswerButton4);
 
-
-        if (soundEnabled) {
-            correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
-            wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
-        }
 
         for (int i = 0; i < buttons.length; i++) {
             final int indexOfButton = i + 1;
@@ -296,11 +307,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     if (whichButtonIsCorrect == indexOfButton) {
                         if (soundEnabled) {
-                            correctAnswerPlayer.reset();
-                            wrongAnswerPlayer.reset();
-                            correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
-                            wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
-                            correctAnswerPlayer.start();
+                            mySoundPool.play(soundIds[0], 1, 1, 1, 0, 1.0f);
                         }
                         roundNumber++;
                         score = score + (roundNumber * (timeLeft / 100));
@@ -308,11 +315,7 @@ public class MainActivity extends AppCompatActivity {
                         roundInit(roundNumber, gameDifficultyLevel);
                     } else {
                         if (soundEnabled) {
-                            correctAnswerPlayer.reset();
-                            wrongAnswerPlayer.reset();
-                            correctAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.correct_answer);
-                            wrongAnswerPlayer = MediaPlayer.create(getApplicationContext(), R.raw.incorrect_answer);
-                            wrongAnswerPlayer.start();
+                            mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
                         }
                         timeLeftCountDownTimer.cancel();
                         if (vibrator.hasVibrator() && vibrationEnabled) {
@@ -339,5 +342,13 @@ public class MainActivity extends AppCompatActivity {
         timeLeftCountDownTimer.cancel();
         Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mySoundPool != null) {
+            mySoundPool.release();
+        }
     }
 }
