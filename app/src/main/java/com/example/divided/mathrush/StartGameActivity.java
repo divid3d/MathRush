@@ -1,5 +1,7 @@
 package com.example.divided.mathrush;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -38,6 +40,7 @@ public class StartGameActivity extends AppCompatActivity {
     ConstraintLayout container;
     View view;
     SoundPool mySoundPool;
+
     int soundIds[] = new int[3];
     private boolean soundEnabled;
     private boolean vibrationEnabled;
@@ -49,6 +52,12 @@ public class StartGameActivity extends AppCompatActivity {
 
         getSettings();
         soundEffectsSetup();
+
+
+        if (!isMyServiceRunning(MusicService.class)) {
+            startService(new Intent(this, MusicService.class));
+        }
+
 
         container = findViewById(R.id.mStartGameLayout);
         mTitle = findViewById(R.id.mTitle);
@@ -76,6 +85,9 @@ public class StartGameActivity extends AppCompatActivity {
                     }
 
                     public void onFinish() {
+                        if (isMyServiceRunning(MusicService.class)) {
+                            stopService(new Intent(getApplicationContext(), MusicService.class));
+                        }
                         Intent intent = new Intent(getBaseContext(), LoadingActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
@@ -134,7 +146,6 @@ public class StartGameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
@@ -164,6 +175,14 @@ public class StartGameActivity extends AppCompatActivity {
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isMyServiceRunning(MusicService.class)) {
+            stopService(new Intent(getApplicationContext(), MusicService.class));
+        }
     }
 
     private void setupTitle() {
@@ -203,9 +222,19 @@ public class StartGameActivity extends AppCompatActivity {
                 , firstWord.length()
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        
+
         mTitle.setText(titleText);
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void quitGame() {

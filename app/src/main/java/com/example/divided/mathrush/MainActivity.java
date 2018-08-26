@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mTimeLeftTextView;
 
     SoundPool mySoundPool;
+
     Vibrator vibrator;
     long[] vibrationPattern = {0, 100, 100, 500};
 
@@ -65,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
+        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer_newest, 1);
         soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
     }
 
