@@ -46,7 +46,6 @@ public class LoadingActivity extends AppCompatActivity {
         mCounter.setCharacterLists(TickerUtils.provideNumberList());
 
         startCountingDown();
-        //mLoadingLayout.startAnimation(AnimationUtils.loadAnimation(this,R.anim.fade_out_then_fade_in));
     }
 
 

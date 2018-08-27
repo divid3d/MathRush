@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     TickerView mRoundBox;
     TextView mTimeLeftTextView;
     TextView mRoundScore;
+    LivesView mLivesView;
 
     SoundPool mySoundPool;
 
@@ -267,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         mTimeLeftTextView = findViewById(R.id.mTimeLeftTextView);
         mTimeLeftBar = findViewById(R.id.mTimeLeftBar);
         mRoundScore = findViewById(R.id.mRoundScore);
+        mLivesView = findViewById(R.id.mLivesView);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
@@ -285,15 +287,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                //mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", 0f) + " s");
-                mTimeLeftBar.setProgress(0);
-                if (vibrator.hasVibrator() && vibrationEnabled) {
-                    vibrator.vibrate(vibrationPattern, -1);
+
+                if (mLivesView.getLifesCount() > 0) {
+                    if (vibrator.hasVibrator() && vibrationEnabled) {
+                        vibrator.vibrate(vibrationPattern, -1);
+                    }
+                    mLivesView.takeAwayOneLife();
+                    roundNumber++;
+                    roundInit(roundNumber, gameDifficultyLevel);
+                } else {
+                    if (vibrator.hasVibrator() && vibrationEnabled) {
+                        vibrator.vibrate(1100);
+                    }
+                    mTimeLeftBar.setProgress(0);
+                    Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                    intent.putExtra("ROUND", roundNumber);
+                    intent.putExtra("SCORE", score);
+                    startActivity(intent);
                 }
-                Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                intent.putExtra("ROUND", roundNumber);
-                intent.putExtra("SCORE", score);
-                startActivity(intent);
             }
         };
 
@@ -319,20 +330,31 @@ public class MainActivity extends AppCompatActivity {
                         timeLeftCountDownTimer.cancel();
                         roundInit(roundNumber, gameDifficultyLevel);
                     } else {
-                        if (soundEnabled) {
-                            mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
-                        }
-                        timeLeftCountDownTimer.cancel();
-                        if (vibrator.hasVibrator() && vibrationEnabled) {
-                            vibrator.vibrate(1100);
-                        }
+                        if (mLivesView.getLifesCount() > 0) {
+                            if (vibrator.hasVibrator() && vibrationEnabled) {
+                                vibrator.vibrate(vibrationPattern, -1);
+                            }
+                            if (soundEnabled) {
+                                mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
+                            }
+                            mLivesView.takeAwayOneLife();
+                            roundNumber++;
+                            roundInit(roundNumber, gameDifficultyLevel);
+                        } else {
+                            if (soundEnabled) {
+                                mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
+                            }
+                            timeLeftCountDownTimer.cancel();
+                            if (vibrator.hasVibrator() && vibrationEnabled) {
+                                vibrator.vibrate(1100);
+                            }
 
-                        Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                        intent.putExtra("ROUND", roundNumber);
-                        intent.putExtra("SCORE", score);
-                        startActivity(intent);
+                            Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                            intent.putExtra("ROUND", roundNumber);
+                            intent.putExtra("SCORE", score);
+                            startActivity(intent);
+                        }
                     }
-
                 }
             });
         }

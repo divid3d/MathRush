@@ -223,7 +223,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/ScoreLayout"
         app:layout_constraintStart_toEndOf="@+id/ScoreLayout"
         app:layout_constraintTop_toTopOf="@+id/ScoreLayout" />
-    />
 
+    <com.example.divided.mathrush.LivesView
+        android:id="@+id/mLivesView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/ScoreLayout"
+        app:layout_constraintEnd_toStartOf="@+id/RoundLayout"
+        app:layout_constraintStart_toEndOf="@+id/ScoreLayout"
+        app:layout_constraintTop_toTopOf="@+id/ScoreLayout">
+
+    </com.example.divided.mathrush.LivesView>
 
 </android.support.constraint.ConstraintLayout>
