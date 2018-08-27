@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     TickerView mScoreBox;
     TickerView mRoundBox;
     TextView mTimeLeftTextView;
+    TextView mRoundScore;
 
     SoundPool mySoundPool;
 
@@ -265,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
         mScoreBox.setCharacterLists(TickerUtils.provideNumberList());
         mTimeLeftTextView = findViewById(R.id.mTimeLeftTextView);
         mTimeLeftBar = findViewById(R.id.mTimeLeftBar);
+        mRoundScore = findViewById(R.id.mRoundScore);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
@@ -312,6 +314,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                         roundNumber++;
                         score = score + (roundNumber * (timeLeft / 100));
+                        mRoundScore.setText("+" + (roundNumber * (timeLeft / 100)));
+                        mRoundScore.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                         timeLeftCountDownTimer.cancel();
                         roundInit(roundNumber, gameDifficultyLevel);
                     } else {
@@ -348,8 +352,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mySoundPool != null) {
-            mySoundPool.release();
-        }
+        mySoundPool.release();
+
     }
 }

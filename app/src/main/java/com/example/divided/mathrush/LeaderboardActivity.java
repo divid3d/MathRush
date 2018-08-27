@@ -71,7 +71,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         mRecyclerView = findViewById(R.id.mScoreView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration itemDecorator = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.score_divider));
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_thick));
         mRecyclerView.addItemDecoration(itemDecorator);
 
         mNextDifficultyArrow = findViewById(R.id.mNextArrow);
@@ -126,7 +126,6 @@ public class LeaderboardActivity extends AppCompatActivity {
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(null);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
 
@@ -290,9 +289,7 @@ public class LeaderboardActivity extends AppCompatActivity {
 
     public void loadScoresToLists(ArrayList<ScoreInformation>[] scoreLists) {
         for (int i = 0; i < scoreLists.length; i++) {
-            if (scoreLists[i] != null) {
-                scoreLists[i].clear();
-            }
+            scoreLists[i].clear();
             for (String scoreInformation : readScoresFromFile(filenamePicker(i + 1)).split("\n")) {
                 String[] values;
                 values = scoreInformation.split("_");
@@ -301,12 +298,11 @@ public class LeaderboardActivity extends AppCompatActivity {
                 }
 
             }
-            if (scoreLists[i] != null) {
-                Collections.sort(scoreLists[i], myScoreComparator);
-            }
+            Collections.sort(scoreLists[i], myScoreComparator);
         }
 
     }
+
     public void soundEffectsSetup() {
         AudioAttributes attrs = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
@@ -321,8 +317,9 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
         soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
-        soundIds[2] = mySoundPool.load(this,R.raw.start_click_new,1);
+        soundIds[2] = mySoundPool.load(this, R.raw.start_click_new, 1);
     }
+
     @Override
     public void onBackPressed() {
         finish();

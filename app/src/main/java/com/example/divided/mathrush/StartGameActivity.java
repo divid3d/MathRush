@@ -44,6 +44,7 @@ public class StartGameActivity extends AppCompatActivity {
     int soundIds[] = new int[3];
     private boolean soundEnabled;
     private boolean vibrationEnabled;
+    private boolean musicEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class StartGameActivity extends AppCompatActivity {
         soundEffectsSetup();
 
 
-        if (!isMyServiceRunning(MusicService.class)) {
+        if (!isMyServiceRunning(MusicService.class) && musicEnabled) {
             startService(new Intent(this, MusicService.class));
         }
 
@@ -109,7 +110,7 @@ public class StartGameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (soundEnabled == true) {
-                    mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
+                    mySoundPool.play(soundIds[1], 0.25f, 0.25f, 1, 0, 1.0f);
                 }
                 Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -122,7 +123,7 @@ public class StartGameActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (soundEnabled == true) {
-                    mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
+                    mySoundPool.play(soundIds[1], 0.25f, 0.25f, 1, 0, 1.0f);
                 }
                 Intent intent = new Intent(getApplicationContext(), LeaderboardActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -174,6 +175,7 @@ public class StartGameActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
+        musicEnabled = sharedPreferences.getBoolean("ENABLE_MAIN_MENU_MUSIC",true);
 
     }
 

@@ -97,9 +97,7 @@ public class GameOverActivity extends AppCompatActivity {
 
     public void loadScoresToLists(ArrayList<ScoreInformation>[] scoreLists) {
         for (int i = 0; i < scoreLists.length; i++) {
-            if (scoreLists[i] != null) {
-                scoreLists[i].clear();
-            }
+            scoreLists[i].clear();
             for (String scoreInformation : readScoresFromFile(filenamePicker(i + 1)).split("\n")) {
                 String[] values;
                 values = scoreInformation.split("_");
@@ -108,9 +106,7 @@ public class GameOverActivity extends AppCompatActivity {
                 }
 
             }
-            if (scoreLists[i] != null) {
-                Collections.sort(scoreLists[i], myScoreComparator);
-            }
+            Collections.sort(scoreLists[i], myScoreComparator);
         }
 
     }
@@ -325,7 +321,7 @@ public class GameOverActivity extends AppCompatActivity {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         DividerItemDecoration itemDecorator = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.score_divider));
+        itemDecorator.setDrawable(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_thick));
         mRecyclerView.addItemDecoration(itemDecorator);
 
         easyScoresAdapter = new ScoresAdapter(scoreLists[0]);
@@ -359,7 +355,6 @@ public class GameOverActivity extends AppCompatActivity {
         };
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(null);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
 
@@ -518,16 +513,11 @@ public class GameOverActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //if (anim != null && !anim.isRunning())
-        //    anim.start();
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // if (anim != null && anim.isRunning())
-        //    anim.stop();
     }
 
     @Override

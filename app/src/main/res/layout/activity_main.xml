@@ -79,15 +79,15 @@
         android:layout_marginEnd="50dp"
         android:layout_marginStart="50dp"
         android:layout_marginTop="100dp"
-        android:background="@drawable/border"
+        android:background="@drawable/border_thick"
         android:fontFamily="@font/product_sans_regular"
         android:gravity="center"
         android:textColor="@android:color/white"
-        android:textSize="50dp" />
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="50dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/mAnswerButton1"
@@ -212,6 +212,17 @@
             app:ticker_animationDuration="500" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/mRoundScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/product_sans_regular"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/ScoreLayout"
+        app:layout_constraintStart_toEndOf="@+id/ScoreLayout"
+        app:layout_constraintTop_toTopOf="@+id/ScoreLayout" />
     />
 
 

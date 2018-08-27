@@ -1,5 +1,6 @@
 package com.example.divided.mathrush;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,7 +24,7 @@ public class SettingsActivity extends PreferenceActivity {
     private Toolbar mToolbar;
     private Preference vibrationPreferance;
     private Preference soundEffectsPreferance;
-
+    private Preference musicPreferance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +34,7 @@ public class SettingsActivity extends PreferenceActivity {
         setContentView(R.layout.activity_settings);
         setSupportActionBar((Toolbar) findViewById(R.id.mToolbar));
         addPreferencesFromResource(R.xml.app_preferences);
+
 
         mToolbar = findViewById(R.id.mToolbar);
 
@@ -87,7 +89,36 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
 
+        musicPreferance = findPreference("ENABLE_MAIN_MENU_MUSIC");
+        musicPreferance.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                final boolean soundEffectsEnabled = PreferenceManager
+                        .getDefaultSharedPreferences(getApplicationContext())
+                        .getBoolean("ENABLE_MAIN_MENU_MUSIC", true);
+                if (soundEffectsEnabled) {
+                    if (!isMyServiceRunning(MusicService.class)) {
+                        startService(new Intent(getApplicationContext(), MusicService.class));
+                    }
+                } else {
+                    if (isMyServiceRunning(MusicService.class)) {
+                        stopService(new Intent(getApplicationContext(), MusicService.class));
+                    }
+                }
+                return false;
+            }
+        });
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
