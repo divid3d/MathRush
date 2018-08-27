@@ -15,9 +15,5 @@
         android:fromYDelta="0"
         android:startOffset="@android:integer/config_shortAnimTime"
         android:toYDelta="50%p" />
-    <alpha
-        android:duration="@android:integer/config_mediumAnimTime"
-        android:fromAlpha="1.0"
-        android:startOffset="@android:integer/config_shortAnimTime"
-        android:toAlpha="0.0" />
+
 </set>

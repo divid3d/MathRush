@@ -288,12 +288,11 @@ public class MainActivity extends AppCompatActivity {
 
             public void onFinish() {
 
-                if (mLivesView.getLifesCount() > 0) {
+                if (mLivesView.getLifesCount() > 1) {
                     if (vibrator.hasVibrator() && vibrationEnabled) {
                         vibrator.vibrate(vibrationPattern, -1);
                     }
                     mLivesView.takeAwayOneLife();
-                    roundNumber++;
                     roundInit(roundNumber, gameDifficultyLevel);
                 } else {
                     if (vibrator.hasVibrator() && vibrationEnabled) {
@@ -330,7 +329,7 @@ public class MainActivity extends AppCompatActivity {
                         timeLeftCountDownTimer.cancel();
                         roundInit(roundNumber, gameDifficultyLevel);
                     } else {
-                        if (mLivesView.getLifesCount() > 0) {
+                        if (mLivesView.getLifesCount() > 1) {
                             if (vibrator.hasVibrator() && vibrationEnabled) {
                                 vibrator.vibrate(vibrationPattern, -1);
                             }
@@ -338,7 +337,6 @@ public class MainActivity extends AppCompatActivity {
                                 mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
                             }
                             mLivesView.takeAwayOneLife();
-                            roundNumber++;
                             roundInit(roundNumber, gameDifficultyLevel);
                         } else {
                             if (soundEnabled) {

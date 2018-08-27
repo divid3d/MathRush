@@ -292,6 +292,7 @@ public class GameOverActivity extends AppCompatActivity {
         for (int i = 0; i < 3; i++) {
             scoreLists[i] = new ArrayList<>();
         }
+        loadScoresToLists(scoreLists);
 
         container = findViewById(R.id.mGameOverLayout);
         mPreviousDifficultyArrow = findViewById(R.id.mPreviousArrow);
@@ -361,7 +362,6 @@ public class GameOverActivity extends AppCompatActivity {
         rankingPickerSetup();
 
 
-        loadScoresToLists(scoreLists);
         mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
         adapterPicker(difficultyPosition).notifyDataSetChanged();
 
@@ -419,6 +419,19 @@ public class GameOverActivity extends AppCompatActivity {
             final int score = extras.getInt("SCORE");
             final int round = extras.getInt("ROUND");
 
+            if (!scoreLists[difficultyPosition - 1].isEmpty()) {
+                if (score > scoreLists[difficultyPosition - 1].get(0).getScore()) {
+                    Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
+                    intent.putExtra("HIGH_SCORE", score);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
+                }
+            } else {
+                Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
+                intent.putExtra("HIGH_SCORE", score);
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
+            }
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
 
