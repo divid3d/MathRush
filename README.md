@@ -1,6 +1,6 @@
 # MathRush
 Game based on solving simple algebraic equations.
-The player must choose the right answer within 5 seconds. The game ends when an incorrect answer is chosen or the time has elapsed.
+The player must choose the right answer within 5 seconds. Round ends when an incorrect answer is chosen or the time has elapsed. The game ends when player lose all 3 lives.
 
 Minimum required version of android is 5.0 Lollipop (API level 21).
 
