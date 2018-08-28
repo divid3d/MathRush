@@ -43,65 +43,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.120000005" />
 
-    <LinearLayout
-        android:id="@+id/mDifficultyPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/mScoreView"
-        android:layout_alignStart="@+id/mScoreView"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <ImageButton
-            android:id="@+id/mPreviousArrow"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@android:color/transparent"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
-            android:soundEffectsEnabled="false"
-            android:src="@drawable/difficulty_back_arrow" />
-
-        <TextSwitcher
-            android:id="@+id/mDiffucultyText"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"
-            android:textAlignment="gravity">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/product_sans_regular"
-                android:gravity="center"
-                android:textAlignment="gravity"
-                android:textColor="#FFFFFF" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="@font/product_sans_regular"
-                android:gravity="center"
-                android:textAlignment="gravity"
-                android:textColor="#FFFFFF" />
-        </TextSwitcher>
-
-        <ImageButton
-            android:id="@+id/mNextArrow"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@android:color/transparent"
-            android:rotation="180"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
-            android:soundEffectsEnabled="false"
-            android:src="@drawable/difficulty_back_arrow" />
-
-    </LinearLayout>
-
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mScoreView"
         android:layout_width="357dp"
@@ -134,4 +75,11 @@
         android:textColor="#FFFFFF"
         android:textSize="50sp"
         android:textStyle="bold" />
+
+    <com.example.divided.mathrush.IndicatorView
+        android:id="@+id/mIndicatorView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/mScoreView"
+        android:layout_alignStart="@+id/mScoreView"></com.example.divided.mathrush.IndicatorView>
 </RelativeLayout>
