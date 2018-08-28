@@ -12,7 +12,6 @@ public class ScoresDatabaseHelper extends SQLiteOpenHelper {
     public static final String TABLE_EASY_NAME = "easy_scores";
     public static final String TABLE_MEDIUM_NAME = "medium_scores";
     public static final String TABLE_HARD_NAME = "hard_scores";
-    public static final String COL1 = "ID";
     public static final String COL2 = "NAME";
     public static final String COL3 = "SCORE";
     public static final String COL4 = "ROUND";
