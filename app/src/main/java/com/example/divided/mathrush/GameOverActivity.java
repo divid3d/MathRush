@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -23,7 +24,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -33,23 +33,32 @@ import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 
 public class GameOverActivity extends AppCompatActivity {
 
+    ScoresDatabaseHelper myDb;
 
-    final String EASY_SCORES_FILENAME = "EASY_SCORES";
-    final String MEDIUM_SCORES_FILENAME = "MEDIUM_SCORES";
-    final String HARD_SCORES_FILENAME = "HARD_SCORES";
+    private void loadScoresFromDatabase(ScoresDatabaseHelper myDb,ArrayList<ScoreInformation>[] scoreLists){
+        for(int i =1;i <=3;i++){
+            Cursor res = myDb.getScores(i);
+            if(res.getCount() == 0){
+                return;
+            }
+            if(!scoreLists[i-1].isEmpty()){
+                scoreLists[i-1].clear();
+            }
+            while(res.moveToNext()){
+                final String name = res.getString(1);
+                final int score = res.getInt(2);
+                final int round = res.getInt(3);
+
+                ScoreInformation newScore = new ScoreInformation(name,round,score);
+                scoreLists[i-1].add(newScore);
+            }
+        }
+    }
 
     Button mRetryButton;
     Button mQuitButton;
@@ -62,17 +71,7 @@ public class GameOverActivity extends AppCompatActivity {
     ImageButton mNextDifficultyArrow;
     ImageButton mPreviousDifficultyArrow;
     TextSwitcher mDifficultyText;
-    Comparator<ScoreInformation> myScoreComparator = new Comparator<ScoreInformation>() {
-        @Override
-        public int compare(ScoreInformation o1, ScoreInformation o2) {
 
-            if (o1.getScore() == o2.getScore()) {
-                return Integer.compare(o2.getRound(), o1.getRound());
-            } else {
-                return Integer.compare(o2.getScore(), o1.getScore());
-            }
-        }
-    };
     private SoundPool mySoundPool;
     private int soundIds[] = new int[3];
     private int difficultyPosition;
@@ -95,39 +94,10 @@ public class GameOverActivity extends AppCompatActivity {
         }
     }
 
-    public void loadScoresToLists(ArrayList<ScoreInformation>[] scoreLists) {
-        for (int i = 0; i < scoreLists.length; i++) {
-            scoreLists[i].clear();
-            for (String scoreInformation : readScoresFromFile(filenamePicker(i + 1)).split("\n")) {
-                String[] values;
-                values = scoreInformation.split("_");
-                if (values.length == 3) {
-                    scoreLists[i].add(new ScoreInformation(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2])));
-                }
-
-            }
-            Collections.sort(scoreLists[i], myScoreComparator);
-        }
-
-    }
-
     public void getSettings() {
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
-
-
-    }
-
-    public String filenamePicker(int difficultyPosition) {
-        if (difficultyPosition == 1) {
-            return EASY_SCORES_FILENAME;
-        } else if (difficultyPosition == 2) {
-            return MEDIUM_SCORES_FILENAME;
-        } else {
-            return HARD_SCORES_FILENAME;
-        }
     }
 
     private void quitGame() {
@@ -231,56 +201,6 @@ public class GameOverActivity extends AppCompatActivity {
 
     }
 
-    private void writeScoresToFile(String filename, String data, boolean append) {
-        try {
-
-            File file = new File(this.getExternalFilesDir(null), filename);
-            if (!file.exists())
-                file.createNewFile();
-
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file, append));
-            writer.write(data + "\n");
-            writer.close();
-
-        } catch (IOException e) {
-            Log.e("WRITE_FILE", "Unable to write " + filename + " file.");
-        }
-    }
-
-    private String readScoresFromFile(String filename) {
-        String outputString = "";
-
-        File testFile = new File(this.getExternalFilesDir(null), filename);
-        if (testFile != null) {
-            BufferedReader reader;
-            try {
-                reader = new BufferedReader(new FileReader(testFile));
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    outputString += line;
-                    outputString += "\n";
-                }
-
-                reader.close();
-
-            } catch (Exception e) {
-                Log.e("READ_FILE", "Unable to read " + filename + " file.");
-            }
-        } else {
-            return "";
-        }
-        return outputString;
-
-    }
-
-    private void clearRanking(String filename) {
-        File testFile = new File(this.getExternalFilesDir(null), filename);
-        if (testFile.exists()) {
-            testFile.delete();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -289,11 +209,14 @@ public class GameOverActivity extends AppCompatActivity {
         getSettings();
         soundEffectsSetup();
 
+        myDb = new ScoresDatabaseHelper(this);
+
+
         for (int i = 0; i < 3; i++) {
             scoreLists[i] = new ArrayList<>();
         }
-        loadScoresToLists(scoreLists);
 
+        loadScoresFromDatabase(myDb,scoreLists);
         container = findViewById(R.id.mGameOverLayout);
         mPreviousDifficultyArrow = findViewById(R.id.mPreviousArrow);
         mNextDifficultyArrow = findViewById(R.id.mNextArrow);
@@ -358,9 +281,7 @@ public class GameOverActivity extends AppCompatActivity {
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(mRecyclerView);
 
-
         rankingPickerSetup();
-
 
         mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
         adapterPicker(difficultyPosition).notifyDataSetChanged();
@@ -368,10 +289,8 @@ public class GameOverActivity extends AppCompatActivity {
         mClearRanking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearRanking(filenamePicker(difficultyPosition));
-
+                myDb.cleareRanking(difficultyPosition);
                 scoreLists[difficultyPosition - 1].clear();
-
                 mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mClearRanking.setEnabled(false);
@@ -419,14 +338,8 @@ public class GameOverActivity extends AppCompatActivity {
             final int score = extras.getInt("SCORE");
             final int round = extras.getInt("ROUND");
 
-            if (!scoreLists[difficultyPosition - 1].isEmpty()) {
-                if (score > scoreLists[difficultyPosition - 1].get(0).getScore()) {
-                    Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
-                    intent.putExtra("HIGH_SCORE", score);
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
-                }
-            } else {
+            if (myDb.getRankingPlace(new ScoreInformation(null,0,score),gameDifficultyLevel)==1) {
+
                 Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
                 intent.putExtra("HIGH_SCORE", score);
                 startActivity(intent);
@@ -434,10 +347,7 @@ public class GameOverActivity extends AppCompatActivity {
             }
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
-
             if (score > 0) {
-
-
                 final EditText input = new EditText(GameOverActivity.this);
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
@@ -456,19 +366,14 @@ public class GameOverActivity extends AppCompatActivity {
                                     name = input.getText().toString();
                                 }
 
-                                writeScoresToFile(filenamePicker(difficultyPosition), name + "_" + round + "_" + score, true);
-
                                 final ScoreInformation newScore = new ScoreInformation(name, round, score);
-                                scoreLists[difficultyPosition - 1].add(newScore);
-                                if (scoreLists[difficultyPosition - 1] != null) {
-                                    Collections.sort(scoreLists[difficultyPosition - 1], myScoreComparator);
-                                }
-                                mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
-                                adapterPicker(difficultyPosition).notifyDataSetChanged();
+                                myDb.insertScore(newScore,gameDifficultyLevel);
+                                loadScoresFromDatabase(myDb,scoreLists);
+                                mRecyclerView.setAdapter(adapterPicker(gameDifficultyLevel));
+                                adapterPicker(gameDifficultyLevel).notifyDataSetChanged();
                                 mRecyclerView.scheduleLayoutAnimation();
-                                final int indexOfScore = scoreLists[difficultyPosition - 1].indexOf(newScore);
-                                //Toast.makeText(getApplicationContext(),Integer.toString(indexOfScore),Toast.LENGTH_LONG).show();
-                                mSummary.append("\nYou took " + (indexOfScore + 1) + " place!");
+                                final int indexOfScore = myDb.getRankingPlace(newScore,gameDifficultyLevel);
+                                mSummary.append("\nYou took " + indexOfScore + " place!");
 
                                 RecyclerView.SmoothScroller smoothScroller = new
                                         LinearSmoothScroller(getApplicationContext()) {
@@ -501,8 +406,6 @@ public class GameOverActivity extends AppCompatActivity {
                 dialog.show();
 
             }
-
-
         }
     }
 

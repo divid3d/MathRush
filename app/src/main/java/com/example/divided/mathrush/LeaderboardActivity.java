@@ -1,5 +1,6 @@
 package com.example.divided.mathrush;
 
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -11,37 +12,18 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextSwitcher;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class LeaderboardActivity extends AppCompatActivity {
 
-    final String EASY_SCORES_FILENAME = "EASY_SCORES";
-    final String MEDIUM_SCORES_FILENAME = "MEDIUM_SCORES";
-    final String HARD_SCORES_FILENAME = "HARD_SCORES";
+    ScoresDatabaseHelper myDb;
 
-    Comparator<ScoreInformation> myScoreComparator = new Comparator<ScoreInformation>() {
-        @Override
-        public int compare(ScoreInformation o1, ScoreInformation o2) {
-
-            if (o1.getScore() == o2.getScore()) {
-                return Integer.compare(o2.getRound(), o1.getRound());
-            } else {
-                return Integer.compare(o2.getScore(), o1.getScore());
-            }
-        }
-    };
     private ArrayList<ScoreInformation>[] scoreLists = (ArrayList<ScoreInformation>[]) new ArrayList[3];
     private ScoresAdapter easyScoresAdapter;
     private ScoresAdapter mediumScoresAdapter;
@@ -60,9 +42,12 @@ public class LeaderboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
 
+        myDb = new ScoresDatabaseHelper(this);
         for (int i = 0; i < 3; i++) {
             scoreLists[i] = new ArrayList<>();
         }
+
+        loadScoresFromDatabase(myDb, scoreLists);
 
         easyScoresAdapter = new ScoresAdapter(scoreLists[0]);
         mediumScoresAdapter = new ScoresAdapter(scoreLists[1]);
@@ -81,10 +66,9 @@ public class LeaderboardActivity extends AppCompatActivity {
         mClearRanking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearRanking(filenamePicker(difficultyPosition));
-
+                myDb.cleareRanking(difficultyPosition);
                 scoreLists[difficultyPosition - 1].clear();
-
+                adapterPicker(difficultyPosition).notifyDataSetChanged();
                 mClearRanking.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mRecyclerView.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
                 mClearRanking.setEnabled(false);
@@ -131,8 +115,6 @@ public class LeaderboardActivity extends AppCompatActivity {
 
         rankingPickerSetup();
 
-
-        loadScoresToLists(scoreLists);
         mRecyclerView.setAdapter(adapterPicker(difficultyPosition));
         adapterPicker(difficultyPosition).notifyDataSetChanged();
     }
@@ -234,48 +216,9 @@ public class LeaderboardActivity extends AppCompatActivity {
 
 
     private void clearRanking(String filename) {
-        File testFile = new File(this.getExternalFilesDir(null), filename);
-        if (testFile.exists()) {
-            testFile.delete();
-        }
-    }
-
-    private String readScoresFromFile(String filename) {
-        String outputString = "";
-
-        File testFile = new File(this.getExternalFilesDir(null), filename);
-        if (testFile != null) {
-            BufferedReader reader;
-            try {
-                reader = new BufferedReader(new FileReader(testFile));
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    outputString += line;
-                    outputString += "\n";
-                }
-
-                reader.close();
-
-            } catch (Exception e) {
-                Log.e("READ_FILE", "Unable to read " + filename + " file.");
-            }
-        } else {
-            return "";
-        }
-        return outputString;
 
     }
 
-    public String filenamePicker(int difficultyPosition) {
-        if (difficultyPosition == 1) {
-            return EASY_SCORES_FILENAME;
-        } else if (difficultyPosition == 2) {
-            return MEDIUM_SCORES_FILENAME;
-        } else {
-            return HARD_SCORES_FILENAME;
-        }
-    }
 
     private ScoresAdapter adapterPicker(int difficultyPosition) {
         if (difficultyPosition == 1) {
@@ -287,20 +230,24 @@ public class LeaderboardActivity extends AppCompatActivity {
         }
     }
 
-    public void loadScoresToLists(ArrayList<ScoreInformation>[] scoreLists) {
-        for (int i = 0; i < scoreLists.length; i++) {
-            scoreLists[i].clear();
-            for (String scoreInformation : readScoresFromFile(filenamePicker(i + 1)).split("\n")) {
-                String[] values;
-                values = scoreInformation.split("_");
-                if (values.length == 3) {
-                    scoreLists[i].add(new ScoreInformation(values[0], Integer.parseInt(values[1]), Integer.parseInt(values[2])));
-                }
-
+    private void loadScoresFromDatabase(ScoresDatabaseHelper myDb, ArrayList<ScoreInformation>[] scoreLists) {
+        for (int i = 1; i <= 3; i++) {
+            Cursor res = myDb.getScores(i);
+            if (res.getCount() == 0) {
+                return;
             }
-            Collections.sort(scoreLists[i], myScoreComparator);
-        }
+            if (!scoreLists[i - 1].isEmpty()) {
+                scoreLists[i - 1].clear();
+            }
+            while (res.moveToNext()) {
+                final String name = res.getString(1);
+                final int score = res.getInt(2);
+                final int round = res.getInt(3);
 
+                ScoreInformation newScore = new ScoreInformation(name, round, score);
+                scoreLists[i - 1].add(newScore);
+            }
+        }
     }
 
     public void soundEffectsSetup() {
