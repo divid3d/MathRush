@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:layout="@layout/preferance_category"
+        android:title="Sound settings">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="ENABLE_SOUND_EFFECTS"
+            android:summary="Check to enable sound effects in game"
+            android:textColor="#FFFFFF"
+            android:title="Enable sound effects" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="ENABLE_MAIN_MENU_MUSIC"
+            android:summary="Check to enable main menu music"
+            android:textColor="#FFFFFF"
+            android:title="Enable music" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:layout="@layout/preferance_category"
+        android:title="Vibration settings">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="ENABLE_VIBRATION"
+            android:summary="Check to enable vibrations in game"
+            android:textColor="#FFFFFF"
+            android:title="Enable vibration" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:layout="@layout/preferance_category"
+        android:title="Game difficulty">
+        <ListPreference
+            android:dialogTitle="Choose difficulty level"
+            android:entries="@array/DifficultyLevelsNames"
+            android:entryValues="@array/DifficultyLevelsValues"
+            android:key="DIFFICULTY_LEVEL"
+            android:summary="Press to choose game difficulty level"
+            android:title="Difficulty level"></ListPreference>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
