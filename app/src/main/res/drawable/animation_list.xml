@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:drawable="@drawable/venice"
-        android:duration="10000" />
-    <item
-        android:drawable="@drawable/love"
-        android:duration="10000" />
+<item
+    android:drawable="@drawable/venice"
+    android:duration="10000" />
+<item
+    android:drawable="@drawable/love"
+    android:duration="10000" />
 
-    <item
-        android:drawable="@drawable/blue_lagoon"
-        android:duration="10000" />
+<item
+    android:drawable="@drawable/blue_lagoon"
+    android:duration="10000" />
 </animation-list>

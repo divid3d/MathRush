@@ -19,20 +19,39 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.robinhood.ticker.TickerView
+    <TextSwitcher
         android:id="@+id/mCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/product_sans_bold"
+        android:inAnimation="@anim/counting_animation"
+        android:outAnimation="@anim/fade_out_instantly"
         android:textColor="@android:color/white"
-        android:textSize="200dp"
+        android:textSize="200sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:ticker_animationDuration="500">
+        app:layout_constraintTop_toTopOf="parent">
 
-    </com.robinhood.ticker.TickerView>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/product_sans_bold"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textColor="#FFFFFF"
+            android:textSize="200sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/product_sans_bold"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textColor="#FFFFFF"
+            android:textSize="200sp" />
+
+    </TextSwitcher>
 
 
 </android.support.constraint.ConstraintLayout>

@@ -5,24 +5,22 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextSwitcher;
 
-import com.robinhood.ticker.TickerUtils;
-import com.robinhood.ticker.TickerView;
 import com.wang.avi.AVLoadingIndicatorView;
 
 public class LoadingActivity extends AppCompatActivity {
 
     CountDownTimer loadingTimer;
-    TickerView mCounter;
+    TextSwitcher mCounter;
     ConstraintLayout mLoadingLayout;
     private AVLoadingIndicatorView loadingIndicator;
 
 
     private void startCountingDown() {
-        loadingTimer = new CountDownTimer(3000, 1) {
-
+        loadingTimer = new CountDownTimer(3000, 1000) {
             public void onTick(long millisUntilFinished) {
-                mCounter.setText(String.valueOf((millisUntilFinished / 1000) + 1));
+                mCounter.setText(String.valueOf((millisUntilFinished / 1000) +1));
             }
 
             public void onFinish() {
@@ -43,8 +41,8 @@ public class LoadingActivity extends AppCompatActivity {
         loadingIndicator.show();
         mLoadingLayout = findViewById(R.id.mLoadingLayout);
         mCounter = findViewById(R.id.mCounter);
-        mCounter.setCharacterLists(TickerUtils.provideNumberList());
-
+        mCounter.setText("3");
+        
         startCountingDown();
     }
 

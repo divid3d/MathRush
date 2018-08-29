@@ -3,7 +3,6 @@ package com.example.divided.mathrush;
 import android.animation.ArgbEvaluator;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Canvas;
@@ -26,8 +25,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -225,60 +222,37 @@ public class GameOverActivity extends AppCompatActivity {
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
             if (score > 0) {
-                final EditText input = new EditText(GameOverActivity.this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                input.setLayoutParams(layoutParams);
+                ScoreDialog scoreDialog= new ScoreDialog();
+                scoreDialog.setOnNameConfirmationListener(new ScoreDialog.OnNameConfirmationListener() {
+                    @Override
+                    public void onConfirm(String name) {
+                        final ScoreInformation newScore = new ScoreInformation(name, round, score);
+                        myDb.insertScore(newScore, gameDifficultyLevel);
 
+                        scoreLists = myDb.loadScoresFromDatabase();
+                        ScoresAdapter scoreAdapter = new ScoresAdapter(scoreLists[gameDifficultyLevel]);
+                        mRecyclerView.setAdapter(scoreAdapter);
+                        mRecyclerView.scheduleLayoutAnimation();
+                        final int indexOfScore = myDb.getRankingPlace(newScore, gameDifficultyLevel);
+                        mSummary.append("\nYou took " + indexOfScore + " place!");
 
-                builder = new AlertDialog.Builder(GameOverActivity.this, R.style.HighScoreDialogTheme);
+                        RecyclerView.SmoothScroller smoothScroller = new
+                                LinearSmoothScroller(getApplicationContext()) {
+                                    @Override
+                                    protected int getVerticalSnapPreference() {
+                                        return LinearSmoothScroller.SNAP_TO_START;
+                                    }
+                                };
 
-                builder.setTitle("Please enter your name")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        smoothScroller.setTargetPosition(indexOfScore);
+                        scoreAdapter.notifyDataSetChanged();
+                        mRecyclerView
+                                .getLayoutManager()
+                                .startSmoothScroll(smoothScroller);
+                    }
+                });
+                scoreDialog.showDialog(this);
 
-                            public void onClick(DialogInterface dialog, int which) {
-                                String name = "Unknown";
-                                if (input.getText().toString().length() != 0) {
-                                    name = input.getText().toString();
-                                }
-
-                                final ScoreInformation newScore = new ScoreInformation(name, round, score);
-                                myDb.insertScore(newScore, gameDifficultyLevel);
-
-                                scoreLists = myDb.loadScoresFromDatabase();
-                                ScoresAdapter scoreAdapter = new ScoresAdapter(scoreLists[gameDifficultyLevel]);
-                                mRecyclerView.setAdapter(scoreAdapter);
-                                mRecyclerView.scheduleLayoutAnimation();
-                                final int indexOfScore = myDb.getRankingPlace(newScore, gameDifficultyLevel);
-                                mSummary.append("\nYou took " + indexOfScore + " place!");
-
-                                RecyclerView.SmoothScroller smoothScroller = new
-                                        LinearSmoothScroller(getApplicationContext()) {
-                                            @Override
-                                            protected int getVerticalSnapPreference() {
-                                                return LinearSmoothScroller.SNAP_TO_START;
-                                            }
-                                        };
-
-                                smoothScroller.setTargetPosition(indexOfScore);
-                                scoreAdapter.notifyDataSetChanged();
-                                mRecyclerView
-                                        .getLayoutManager()
-                                        .startSmoothScroll(smoothScroller);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .setView(input)
-                        .setIcon(R.drawable.ic_round_fiber_new_24px);
-
-                AlertDialog dialog = builder.create();
-                Objects.requireNonNull(dialog.getWindow()).getAttributes().windowAnimations = R.style.DialogAnimation;
-                dialog.show();
             }
         }
     }

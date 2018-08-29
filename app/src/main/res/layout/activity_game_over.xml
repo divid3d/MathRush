@@ -131,7 +131,8 @@
         android:id="@+id/mIndicatorView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="100dp"></com.example.divided.mathrush.IndicatorView>
+        app:layout_constraintBottom_toBottomOf="@+id/mClearRanking"
+        app:layout_constraintStart_toStartOf="@+id/mScoreView"
+        app:layout_constraintTop_toTopOf="@+id/mClearRanking"></com.example.divided.mathrush.IndicatorView>
 
 </android.support.constraint.ConstraintLayout>
