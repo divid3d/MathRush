@@ -73,12 +73,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getSettings() {
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
         gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
-
     }
 
     private int randomSign(boolean isPositive) {
@@ -88,9 +86,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void buttonsSetup(Button[] buttons, int whichButtonIsCorrect, int correctAnswer) {
-
         Deque<Integer> otherAnswers = new ArrayDeque<>();
-
 
         while (otherAnswers.size() != 3) {
             Random randomGenerator = new Random();
@@ -100,20 +96,16 @@ public class MainActivity extends AppCompatActivity {
                 if (!otherAnswers.contains(generated)) {
                     otherAnswers.add(generated);
                 }
-
             } else {
                 int generated = correctAnswer - (randomGenerator.nextInt(10) + 1);
                 if (!otherAnswers.contains(generated)) {
                     otherAnswers.add(generated);
                 }
             }
-
             for (Button button : buttons) {
                 button.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_instantly));
             }
-
         }
-
         for (int i = 0; i < buttons.length; i++) {
             if (i + 1 == whichButtonIsCorrect) {
                 buttons[i].setText(Integer.toString(correctAnswer));
@@ -145,7 +137,6 @@ public class MainActivity extends AppCompatActivity {
             default:
                 result = 0;
                 break;
-
         }
         return result;
     }
@@ -155,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
             button.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_instantly));
         }
         mEquationBox.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_instantly));
-
 
         Random randomGenerator = new Random();
         randomGenerator.setSeed(System.currentTimeMillis());
@@ -199,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-
         switch (operationArray[whichOperation]) {
             case '+':
                 correctAnswer = firstElement + secondElement;
@@ -220,10 +209,8 @@ public class MainActivity extends AppCompatActivity {
                         secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
                     }
                     correctAnswer = firstElement / secondElement;
-
                 }
         }
-
 
         if (secondElement < 0) {
             String toShow = firstElement + " " + operationArray[whichOperation] + " " + "(" + secondElement + ")" + " = ";
@@ -233,7 +220,6 @@ public class MainActivity extends AppCompatActivity {
             mEquationBox.setText(toShow);
         }
 
-
         whichButtonIsCorrect = randomGenerator.nextInt(4) + 1;
 
         buttonsSetup(buttons, whichButtonIsCorrect, correctAnswer);
@@ -242,7 +228,6 @@ public class MainActivity extends AppCompatActivity {
         mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", 5f) + " s");
         mTimeLeftBar.setProgress(mTimeLeftBar.getMax());
         timeLeftCountDownTimer.start();
-
 
     }
 
@@ -275,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
         timeLeftCountDownTimer = new CountDownTimer(5000, 10) {
 
             public void onTick(long millisUntilFinished) {
-                float percentage = 0;
                 timeLeft = (int) millisUntilFinished;
                 String firstWord = "Time remaining: ";
                 String secondWord = String.format("%.2f", (double) (millisUntilFinished / 1000.0)) + " s";
@@ -283,7 +267,6 @@ public class MainActivity extends AppCompatActivity {
                 timeLeftText.setSpan(new RelativeSizeSpan(1.2f), firstWord.length(), firstWord.length() + secondWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                 mTimeLeftTextView.setText(timeLeftText);
                 mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
-
             }
 
             public void onFinish() {
@@ -311,7 +294,6 @@ public class MainActivity extends AppCompatActivity {
         buttons[1] = findViewById(R.id.mAnswerButton2);
         buttons[2] = findViewById(R.id.mAnswerButton3);
         buttons[3] = findViewById(R.id.mAnswerButton4);
-
 
         for (int i = 0; i < buttons.length; i++) {
             final int indexOfButton = i + 1;
@@ -356,14 +338,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
-
         roundInit(roundNumber, gameDifficultyLevel);
     }
 
     @Override
     public void onBackPressed() {
-
         timeLeftCountDownTimer.cancel();
         Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
         startActivity(intent);

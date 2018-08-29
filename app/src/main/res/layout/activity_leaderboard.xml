@@ -1,85 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_frame"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/blue_lagoon"
-    tools:context=".LeaderboardActivity">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/mClearRanking"
-        android:layout_width="wrap_content"
-        android:layout_height="39dp"
-        android:layout_above="@+id/mScoreView"
-        android:layout_alignEnd="@+id/mScoreView"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/border"
-        android:drawableEnd="@android:drawable/ic_menu_delete"
-        android:fontFamily="@font/product_sans_regular"
-        android:foreground="?attr/selectableItemBackground"
-        android:soundEffectsEnabled="false"
-        android:text="Clear"
-        android:textColor="#FFFFFF"
-        android:theme="@style/AppTheme.WhiteRipple"
-        app:layout_constraintBottom_toTopOf="@+id/mScoreView"
-        app:layout_constraintEnd_toEndOf="@+id/mScoreView"
-        app:layout_constraintTop_toTopOf="@+id/mSummary" />
-
-    <Button
-        android:id="@+id/mBackButton"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/mToolbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="52dp"
-        android:background="@drawable/button"
-        android:fontFamily="@font/product_sans_regular"
-        android:foreground="?attr/selectableItemBackground"
-        android:soundEffectsEnabled="false"
-        android:text="Back"
-        android:textColor="#FFFFFF"
-        android:theme="@style/AppTheme.WhiteRipple"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.120000005" />
+        android:background="#4a000000"
+        android:minHeight="?attr/actionBarSize"
+        >
+        <ImageView
+            android:id="@+id/toolbar_logo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:adjustViewBounds="true"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:src="@drawable/ic_leaderboard_icon"/>
+    </android.support.v7.widget.Toolbar>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/mScoreView"
-        android:layout_width="357dp"
-        android:layout_height="406dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="112dp"
-        android:layoutAnimation="@anim/ranking_list_animation"
-        android:scrollbarSize="5dp"
-        android:scrollbarStyle="insideOverlay"
-        android:scrollbarThumbVertical="@android:color/white"
-        android:scrollbars="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/blue_lagoon"
+        tools:context=".LeaderboardActivity">
 
-    <TextView
-        android:id="@+id/mLeaderboardTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:fontFamily="@font/product_sans_bold"
-        android:gravity="center"
-        android:shadowColor="#FFFFFF"
-        android:shadowDx="0.01"
-        android:shadowDy="0.01"
-        android:shadowRadius="20"
-        android:text="Leaderboard"
-        android:textColor="#FFFFFF"
-        android:textSize="50sp"
-        android:textStyle="bold" />
+        <Button
+            android:id="@+id/mClearRanking"
+            android:layout_width="wrap_content"
+            android:layout_height="39dp"
+            android:layout_above="@+id/mScoreView"
+            android:layout_alignEnd="@+id/mScoreView"
+            android:layout_marginBottom="-60dp"
+            android:background="@drawable/border"
+            android:drawableEnd="@android:drawable/ic_menu_delete"
+            android:fontFamily="@font/product_sans_regular"
+            android:foreground="?attr/selectableItemBackground"
+            android:soundEffectsEnabled="false"
+            android:text="Clear"
+            android:textColor="#FFFFFF"
+            android:theme="@style/AppTheme.WhiteRipple"
+            app:layout_constraintBottom_toTopOf="@+id/mScoreView"
+            app:layout_constraintEnd_toEndOf="@+id/mScoreView" />
 
-    <com.example.divided.mathrush.IndicatorView
-        android:id="@+id/mIndicatorView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/mScoreView"
-        android:layout_alignStart="@+id/mScoreView"></com.example.divided.mathrush.IndicatorView>
-</RelativeLayout>
+        <Button
+            android:id="@+id/mBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/button"
+            android:fontFamily="@font/product_sans_regular"
+            android:foreground="?attr/selectableItemBackground"
+            android:soundEffectsEnabled="false"
+            android:text="Back"
+            android:textColor="#FFFFFF"
+            android:theme="@style/AppTheme.WhiteRipple"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.120000005" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/mScoreView"
+            android:layout_width="357dp"
+            android:layout_height="461dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="60dp"
+            android:layoutAnimation="@anim/ranking_list_animation"
+            android:scrollbarSize="5dp"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbarThumbVertical="@android:color/white"
+            android:scrollbars="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.example.divided.mathrush.IndicatorView
+            android:id="@+id/mIndicatorView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/mScoreView"
+            android:layout_alignStart="@+id/mScoreView"
+            android:layout_marginBottom="-60dp">
+
+        </com.example.divided.mathrush.IndicatorView>
+    </RelativeLayout>
+</LinearLayout>

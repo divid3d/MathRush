@@ -15,6 +15,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 public class SettingsActivity extends PreferenceActivity {
 
@@ -35,11 +38,32 @@ public class SettingsActivity extends PreferenceActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.mToolbar));
         addPreferencesFromResource(R.xml.app_preferences);
 
+        final ImageView settingsIcon = findViewById(R.id.toolbar_logo);
 
         mToolbar = findViewById(R.id.mToolbar);
 
         mToolbar.setNavigationIcon(R.drawable.ic_round_arrow_back_ios_24px);
         mToolbar.setTitleTextColor(Color.WHITE);
+
+        Animation toolbarSlideInAnimation = AnimationUtils.loadAnimation(this,R.anim.slide_in_right);
+        toolbarSlideInAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                settingsIcon.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.settings_icon));
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mToolbar.startAnimation(toolbarSlideInAnimation);
 
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

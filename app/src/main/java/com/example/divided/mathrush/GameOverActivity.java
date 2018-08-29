@@ -80,7 +80,6 @@ public class GameOverActivity extends AppCompatActivity {
 
         container = findViewById(R.id.mGameOverLayout);
         mRetryButton = findViewById(R.id.mRetryButton);
-        mRetryButton.startAnimation(AnimationUtils.loadAnimation(this, R.anim.pulse_animation));
         mGameOver = findViewById(R.id.mGameOver);
         ValueAnimator valueAnimator = ObjectAnimator.ofInt(
                 mGameOver, // Target object
@@ -222,17 +221,16 @@ public class GameOverActivity extends AppCompatActivity {
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
             if (score > 0) {
-                ScoreDialog scoreDialog= new ScoreDialog();
+                ScoreDialog scoreDialog = new ScoreDialog();
                 scoreDialog.setOnNameConfirmationListener(new ScoreDialog.OnNameConfirmationListener() {
                     @Override
                     public void onConfirm(String name) {
+                        mRetryButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulse_animation));
                         final ScoreInformation newScore = new ScoreInformation(name, round, score);
                         myDb.insertScore(newScore, gameDifficultyLevel);
-
                         scoreLists = myDb.loadScoresFromDatabase();
                         ScoresAdapter scoreAdapter = new ScoresAdapter(scoreLists[gameDifficultyLevel]);
                         mRecyclerView.setAdapter(scoreAdapter);
-                        mRecyclerView.scheduleLayoutAnimation();
                         final int indexOfScore = myDb.getRankingPlace(newScore, gameDifficultyLevel);
                         mSummary.append("\nYou took " + indexOfScore + " place!");
 
@@ -252,8 +250,8 @@ public class GameOverActivity extends AppCompatActivity {
                     }
                 });
                 scoreDialog.showDialog(this);
-
             }
+            mRetryButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulse_animation));
         }
     }
 

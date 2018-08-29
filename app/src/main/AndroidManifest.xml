@@ -44,6 +44,7 @@
             android:theme="@style/PreferenceSettings" />
         <activity
             android:name=".LeaderboardActivity"
+            android:label="Leaderboard"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" />
 

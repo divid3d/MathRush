@@ -1,15 +1,20 @@
 package com.example.divided.mathrush;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -26,16 +31,34 @@ public class LeaderboardActivity extends AppCompatActivity {
     private Button mClearRanking;
     private RecyclerView mRecyclerView;
     private SoundPool mySoundPool;
+    private AppCompatDelegate mDelegate;
+    private Toolbar mToolbar;
     private int soundIds[] = new int[3];
 
     private IndicatorView myIndicatorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getDelegate().installViewFactory();
+        getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
+        setSupportActionBar((Toolbar) findViewById(R.id.mToolbar));
+
+        mToolbar = findViewById(R.id.mToolbar);
+
+        mToolbar.setNavigationIcon(R.drawable.ic_round_arrow_back_ios_24px);
+        mToolbar.setTitleTextColor(Color.WHITE);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        mToolbar.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_in_right));
 
         myDb = new ScoresDatabaseHelper(this);
+
         for (int i = 0; i < 3; i++) {
             scoreLists[i] = new ArrayList<>();
         }
@@ -136,6 +159,45 @@ public class LeaderboardActivity extends AppCompatActivity {
         soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
         soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
         soundIds[2] = mySoundPool.load(this, R.raw.start_click_new, 1);
+    }
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        getDelegate().onPostCreate(savedInstanceState);
+    }
+
+    @Override
+    public void setContentView(@LayoutRes int layoutResID) {
+        getDelegate().setContentView(layoutResID);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        getDelegate().onStop();
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        getDelegate().onPostResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        getDelegate().onDestroy();
+    }
+
+    public void setSupportActionBar(@Nullable Toolbar toolbar) {
+        getDelegate().setSupportActionBar(toolbar);
+    }
+
+    public AppCompatDelegate getDelegate() {
+        if (mDelegate == null) {
+            mDelegate = AppCompatDelegate.create(this, null);
+        }
+        return mDelegate;
     }
 
     @Override

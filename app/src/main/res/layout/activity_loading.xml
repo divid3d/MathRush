@@ -25,9 +25,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/product_sans_bold"
         android:inAnimation="@anim/counting_animation"
-        android:outAnimation="@anim/fade_out_instantly"
         android:textColor="@android:color/white"
-        android:textSize="200sp"
+        android:textSize="300sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +39,7 @@
             android:gravity="center"
             android:textAlignment="gravity"
             android:textColor="#FFFFFF"
-            android:textSize="200sp" />
+            android:textSize="300sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -49,7 +48,7 @@
             android:gravity="center"
             android:textAlignment="gravity"
             android:textColor="#FFFFFF"
-            android:textSize="200sp" />
+            android:textSize="300sp" />
 
     </TextSwitcher>
 

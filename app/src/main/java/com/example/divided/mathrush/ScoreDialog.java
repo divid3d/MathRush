@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.view.View;
 import android.view.Window;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,11 +34,9 @@ public class ScoreDialog {
         Objects.requireNonNull(dialog.getWindow()).getAttributes().windowAnimations = R.style.DialogAnimation;
 
         final ImageView icon = dialog.findViewById(R.id.icon);
-        icon.startAnimation(AnimationUtils.loadAnimation(activity,android.R.anim.slide_in_left));
-
+        final Animation iconAnimation= AnimationUtils.loadAnimation(activity,R.anim.score_dialog_icon);
         final EditText text = dialog.findViewById(R.id.text_dialog);
-
-
+        text.startAnimation(AnimationUtils.loadAnimation(activity,R.anim.slide_in_left));
         Button dialogButton = dialog.findViewById(R.id.btn_dialog);
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +59,9 @@ public class ScoreDialog {
 
         dialog.show();
 
+        text.startAnimation(AnimationUtils.loadAnimation(activity,R.anim.slide_in_left));
+        dialogButton.startAnimation(AnimationUtils.loadAnimation(activity,R.anim.slide_in_right));
+        icon.startAnimation(iconAnimation);
     }
 
     public interface OnNameConfirmationListener{
