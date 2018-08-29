@@ -21,7 +21,6 @@ public class IndicatorView extends LinearLayout {
     private int fromIndex;
     private int toIndex;
     private int currentPositionIndex;
-    private String labels[];
     @SuppressLint("UseSparseArrays")
     private HashMap<Integer, String> textHashMap = new HashMap<>();
     private OnPositionChangeListener listener;

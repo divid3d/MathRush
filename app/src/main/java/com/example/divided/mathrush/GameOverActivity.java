@@ -14,7 +14,6 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -42,7 +41,6 @@ public class GameOverActivity extends AppCompatActivity {
     TextView mGameOver;
     ConstraintLayout container;
     RecyclerView mRecyclerView;
-    AlertDialog.Builder builder;
     IndicatorView myIndicatorView;
 
     private SoundPool mySoundPool;

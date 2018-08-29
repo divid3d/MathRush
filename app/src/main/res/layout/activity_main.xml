@@ -157,18 +157,42 @@
         app:layout_constraintStart_toStartOf="@+id/mAnswerButton2"
         app:layout_constraintTop_toBottomOf="@+id/mAnswerButton2" />
 
-    <TextView
+    <TextSwitcher
         android:id="@+id/mTimeLeftTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/product_sans_regular"
+        android:inAnimation="@anim/main_game_counting"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
+        android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/mTimeLeftBar"
-        app:layout_constraintEnd_toEndOf="@+id/mTimeLeftBar"
-        app:layout_constraintStart_toStartOf="@+id/mTimeLeftBar"
-        app:layout_constraintTop_toBottomOf="@+id/mEquationBox" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mEquationBox">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/product_sans_bold"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textColor="#FFFFFF"
+            android:textSize="50sp"  />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/product_sans_bold"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textColor="#FFFFFF"
+            android:textSize="50sp"  />
+
+    </TextSwitcher>
 
     <LinearLayout
         android:id="@+id/RoundLayout"

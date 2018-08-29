@@ -11,13 +11,10 @@ import android.os.CountDownTimer;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.daimajia.numberprogressbar.NumberProgressBar;
@@ -33,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mEquationBox;
     TickerView mScoreBox;
     TickerView mRoundBox;
-    TextView mTimeLeftTextView;
+    TextSwitcher mTimeLeftTextView;
     TextView mRoundScore;
     LivesView mLivesView;
 
@@ -158,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         int secondElement;
         int whichOperation;
 
-        if (gameDifficultyLevel == 1) {
+        if (gameDifficultyLevel == 0) {
             whichOperation = randomGenerator.nextInt(2);
         } else {
             whichOperation = randomGenerator.nextInt(4);
@@ -166,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (operationArray[whichOperation] == '*') {
 
-            if (gameDifficultyLevel == 1) {
+            if (gameDifficultyLevel == 0) {
                 do {
                     firstElement = (randomGenerator.nextInt(20) + 1);
                     secondElement = (randomGenerator.nextInt(20) + 1);
@@ -177,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
             }
         } else {
-            if (gameDifficultyLevel == 1) {
+            if (gameDifficultyLevel == 0) {
                 do {
                     firstElement = (randomGenerator.nextInt(20) + 1);
                     secondElement = (randomGenerator.nextInt(20) + 1);
@@ -225,7 +222,6 @@ public class MainActivity extends AppCompatActivity {
         buttonsSetup(buttons, whichButtonIsCorrect, correctAnswer);
         mEquationBox.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_instantly));
 
-        mTimeLeftTextView.setText("Time remaining: " + String.format("%.2f", 5f) + " s");
         mTimeLeftBar.setProgress(mTimeLeftBar.getMax());
         timeLeftCountDownTimer.start();
 
@@ -257,15 +253,15 @@ public class MainActivity extends AppCompatActivity {
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
 
-        timeLeftCountDownTimer = new CountDownTimer(5000, 10) {
+        timeLeftCountDownTimer = new CountDownTimer(5000, 1) {
 
             public void onTick(long millisUntilFinished) {
-                timeLeft = (int) millisUntilFinished;
-                String firstWord = "Time remaining: ";
-                String secondWord = String.format("%.2f", (double) (millisUntilFinished / 1000.0)) + " s";
-                Spannable timeLeftText = new SpannableString(firstWord + secondWord);
-                timeLeftText.setSpan(new RelativeSizeSpan(1.2f), firstWord.length(), firstWord.length() + secondWord.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                mTimeLeftTextView.setText(timeLeftText);
+                TextView currentTextView = (TextView) mTimeLeftTextView.getCurrentView();
+                final String currentText = currentTextView.getText().toString();
+                if(!currentText.equals(String.valueOf(((millisUntilFinished / 1000))+1))) {
+                    mTimeLeftTextView.setText(String.valueOf(((millisUntilFinished / 1000))+1));
+                }
+                timeLeft= (int)millisUntilFinished;
                 mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
             }
 

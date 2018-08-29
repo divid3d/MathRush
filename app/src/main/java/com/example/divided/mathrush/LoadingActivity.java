@@ -15,15 +15,12 @@ public class LoadingActivity extends AppCompatActivity {
     CountDownTimer loadingTimer;
     TextSwitcher mCounter;
     ConstraintLayout mLoadingLayout;
-    private AVLoadingIndicatorView loadingIndicator;
-
 
 
     private void startCountingDown() {
         loadingTimer = new CountDownTimer(3000, 500) {
             public void onTick(long millisUntilFinished) {
-                TextView currentTextView = (TextView) mCounter.getCurrentView();
-                final String currentText = currentTextView.getText().toString();
+                final String currentText = ((TextView) mCounter.getCurrentView()).getText().toString();
                 if(!currentText.equals(String.valueOf(((millisUntilFinished / 1000))+1))) {
                     mCounter.setText(String.valueOf(((millisUntilFinished / 1000))+1));
                 }
@@ -42,7 +39,8 @@ public class LoadingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
-        loadingIndicator = findViewById(R.id.mLoadingIndicator);
+
+        AVLoadingIndicatorView loadingIndicator = findViewById(R.id.mLoadingIndicator);
         loadingIndicator.show();
         mLoadingLayout = findViewById(R.id.mLoadingLayout);
         mCounter = findViewById(R.id.mCounter);
