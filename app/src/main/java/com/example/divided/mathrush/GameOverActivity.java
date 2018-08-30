@@ -209,13 +209,6 @@ public class GameOverActivity extends AppCompatActivity {
             final int score = extras.getInt("SCORE");
             final int round = extras.getInt("ROUND");
 
-            if (myDb.getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
-
-                Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
-                intent.putExtra("HIGH_SCORE", score);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
-            }
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
 
             if (score > 0) {

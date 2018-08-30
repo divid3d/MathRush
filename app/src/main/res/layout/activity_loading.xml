@@ -27,6 +27,7 @@
         android:inAnimation="@anim/counting_animation"
         android:textColor="@android:color/white"
         android:textSize="300sp"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

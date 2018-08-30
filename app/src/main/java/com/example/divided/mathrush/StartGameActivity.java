@@ -24,10 +24,13 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import com.plattysoft.leonids.ParticleSystem;
 
 public class StartGameActivity extends AppCompatActivity {
 
@@ -74,6 +77,14 @@ public class StartGameActivity extends AppCompatActivity {
 
                 mStartButton.setEnabled(false);
                 mQuitButton.setEnabled(false);
+
+                ParticleSystem ps = new ParticleSystem(StartGameActivity.this, 400, R.drawable.square_particle, 1500);
+                ps.setScaleRange(0.05f, 0.4f);
+                ps.setSpeedRange(0.1f, 0.25f);
+                ps.setAcceleration(0.0001f, 90);
+                ps.setRotationSpeedRange(90, 180);
+                ps.setFadeOut(200, new AccelerateInterpolator());
+                ps.oneShot(findViewById(R.id.mStartButton), 400);
 
                 if (soundEnabled == true) {
                     mySoundPool.play(soundIds[0], 1, 1, 1, 0, 1.0f);

@@ -8,6 +8,7 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Layout;
 import android.text.Spannable;
@@ -22,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.plattysoft.leonids.ParticleSystem;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
@@ -32,14 +34,13 @@ public class HighscoreActivity extends AppCompatActivity {
     private Button mNext;
     private SoundPool mySoundPool;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_highscore);
         setupText();
         soundEffectsSetup();
+
         mySoundPool.load(this, R.raw.highscore, 1);
         mySoundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
@@ -51,11 +52,41 @@ public class HighscoreActivity extends AppCompatActivity {
         mScore.setCharacterLists(TickerUtils.provideNumberList());
         mScore.setText("0");
         mNext = findViewById(R.id.mNext);
+        CountDownTimer countDownToConfeti = new CountDownTimer(2000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                new ParticleSystem(HighscoreActivity.this, 200, R.drawable.confeti1, 4000)
+                        .setSpeedModuleAndAngleRange(0f, 0.1f, 180, 180)
+                        .setRotationSpeed(144)
+                        .setFadeOut(500)
+                        .setAcceleration(0.00008f, 90)
+                        .emit(findViewById(R.id.emiter_top_right), 20);
+
+                new ParticleSystem(HighscoreActivity.this, 200, R.drawable.confeti2, 4000)
+                        .setSpeedModuleAndAngleRange(0f, 0.1f, 0, 0)
+                        .setRotationSpeed(144)
+                        .setFadeOut(500)
+                        .setAcceleration(0.00008f, 90)
+                        .emit(findViewById(R.id.emiter_top_left), 20);
+            }
+        }.start();
+
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
-                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                final Bundle extras = getIntent().getExtras();
+                if (extras != null) {
+                    intent.putExtra("ROUND", extras.getInt("ROUND"));
+                    intent.putExtra("SCORE", extras.getInt("SCORE"));
+                }
+                startActivity(intent);
+                overridePendingTransition(R.anim.fade_in_instantly, R.anim.fade_out);
             }
         });
         final Bundle extras = getIntent().getExtras();
@@ -65,12 +96,13 @@ public class HighscoreActivity extends AppCompatActivity {
             mScore.addAnimatorListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mScore.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.pulse_animation));
+                    mScore.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulse_animation));
                     mNext.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulse_animation));
                 }
             });
         }
     }
+
     private void setupText() {
         mHighScoreText = findViewById(R.id.mCongratulationsTitle);
         String firstWord = "Congratulations!\n";
@@ -104,7 +136,7 @@ public class HighscoreActivity extends AppCompatActivity {
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         mHighScoreText.setText(titleText);
-        mHighScoreText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.smooth_appear_aniamtion));
+        //mHighScoreText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.smooth_appear_aniamtion));
     }
 
     public void soundEffectsSetup() {

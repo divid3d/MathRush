@@ -258,10 +258,10 @@ public class MainActivity extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 TextView currentTextView = (TextView) mTimeLeftTextView.getCurrentView();
                 final String currentText = currentTextView.getText().toString();
-                if(!currentText.equals(String.valueOf(((millisUntilFinished / 1000))+1))) {
-                    mTimeLeftTextView.setText(String.valueOf(((millisUntilFinished / 1000))+1));
+                if (!currentText.equals(String.valueOf(((millisUntilFinished / 1000)) + 1))) {
+                    mTimeLeftTextView.setText(String.valueOf(((millisUntilFinished / 1000)) + 1));
                 }
-                timeLeft= (int)millisUntilFinished;
+                timeLeft = (int) millisUntilFinished;
                 mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
             }
 
@@ -278,10 +278,20 @@ public class MainActivity extends AppCompatActivity {
                         vibrator.vibrate(1100);
                     }
                     mTimeLeftBar.setProgress(0);
-                    Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                    intent.putExtra("ROUND", roundNumber);
-                    intent.putExtra("SCORE", score);
-                    startActivity(intent);
+                    if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
+
+                        Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
+                        intent.putExtra("HIGH_SCORE", score);
+                        intent.putExtra("ROUND", roundNumber);
+                        intent.putExtra("SCORE", score);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.transition_in_highscore_activity, R.anim.fade_out);
+                    } else {
+                        Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                        intent.putExtra("ROUND", roundNumber);
+                        intent.putExtra("SCORE", score);
+                        startActivity(intent);
+                    }
                 }
             }
         };
@@ -325,10 +335,20 @@ public class MainActivity extends AppCompatActivity {
                                 vibrator.vibrate(1100);
                             }
 
-                            Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                            intent.putExtra("ROUND", roundNumber);
-                            intent.putExtra("SCORE", score);
-                            startActivity(intent);
+                            if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
+
+                                Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
+                                intent.putExtra("HIGH_SCORE", score);
+                                intent.putExtra("ROUND", roundNumber);
+                                intent.putExtra("SCORE", score);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.transition_in_highscore_activity, R.anim.fade_out);
+                            } else {
+                                Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                                intent.putExtra("ROUND", roundNumber);
+                                intent.putExtra("SCORE", score);
+                                startActivity(intent);
+                            }
                         }
                     }
                 }

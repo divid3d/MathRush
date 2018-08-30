@@ -32,6 +32,12 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="Math Rush"
             android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".HighscoreActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="High score"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".LoadingActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -44,8 +50,8 @@
             android:theme="@style/PreferenceSettings" />
         <activity
             android:name=".LeaderboardActivity"
-            android:label="Leaderboard"
             android:configChanges="orientation|keyboardHidden"
+            android:label="Leaderboard"
             android:screenOrientation="portrait" />
 
         <service
@@ -53,7 +59,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".HighscoreActivity"></activity>
     </application>
 
 </manifest>
