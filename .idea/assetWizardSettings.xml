@@ -36,9 +36,9 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="imageAsset" value="C:\Users\Divided\Downloads\confeti3.png" />
-                                      <entry key="outputName" value="confeti2" />
+                                      <entry key="outputName" value="confetti_green" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="ff0000" />
+                                      <entry key="themeColor" value="78ff44" />
                                     </map>
                                   </option>
                                 </PersistentState>

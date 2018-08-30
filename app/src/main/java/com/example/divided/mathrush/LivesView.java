@@ -27,8 +27,6 @@ public class LivesView extends LinearLayout {
         hearts[0] = findViewById(R.id.mHeart1);
         hearts[1] = findViewById(R.id.mHeart2);
         hearts[2] = findViewById(R.id.mHeart3);
-
-
     }
 
     public void takeAwayOneLife() {
@@ -36,7 +34,6 @@ public class LivesView extends LinearLayout {
             animateHeartOut(hearts[lifesCount - 1]);
             this.lifesCount--;
         }
-
     }
 
     public void addOneLife() {
@@ -51,7 +48,6 @@ public class LivesView extends LinearLayout {
         fadeInAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -62,7 +58,6 @@ public class LivesView extends LinearLayout {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
         heart.startAnimation(fadeInAnimation);
@@ -73,7 +68,6 @@ public class LivesView extends LinearLayout {
         fadeOutAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
@@ -84,7 +78,6 @@ public class LivesView extends LinearLayout {
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
         heart.startAnimation(fadeOutAnimation);

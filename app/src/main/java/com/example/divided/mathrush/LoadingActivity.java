@@ -16,13 +16,12 @@ public class LoadingActivity extends AppCompatActivity {
     TextSwitcher mCounter;
     ConstraintLayout mLoadingLayout;
 
-
     private void startCountingDown() {
         loadingTimer = new CountDownTimer(3000, 500) {
             public void onTick(long millisUntilFinished) {
                 final String currentText = ((TextView) mCounter.getCurrentView()).getText().toString();
-                if(!currentText.equals(String.valueOf(((millisUntilFinished / 1000))+1))) {
-                    mCounter.setText(String.valueOf(((millisUntilFinished / 1000))+1));
+                if (!currentText.equals(String.valueOf(((millisUntilFinished / 1000)) + 1))) {
+                    mCounter.setText(String.valueOf(((millisUntilFinished / 1000)) + 1));
                 }
             }
 
@@ -48,9 +47,7 @@ public class LoadingActivity extends AppCompatActivity {
         startCountingDown();
     }
 
-
     @Override
     public void onBackPressed() {
-
     }
 }

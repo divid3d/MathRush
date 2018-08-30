@@ -22,5 +22,4 @@ public class ScoreInformation {
     public int getScore() {
         return score;
     }
-
 }

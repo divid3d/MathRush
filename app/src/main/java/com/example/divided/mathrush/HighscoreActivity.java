@@ -24,12 +24,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.plattysoft.leonids.ParticleSystem;
+import com.plattysoft.leonids.modifiers.AlphaModifier;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
 public class HighscoreActivity extends AppCompatActivity {
 
-    private TextView mHighScoreText;
     private TickerView mScore;
     private Button mNext;
     private SoundPool mySoundPool;
@@ -52,30 +52,6 @@ public class HighscoreActivity extends AppCompatActivity {
         mScore.setCharacterLists(TickerUtils.provideNumberList());
         mScore.setText("0");
         mNext = findViewById(R.id.mNext);
-        CountDownTimer countDownToConfeti = new CountDownTimer(2000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-
-            }
-
-            @Override
-            public void onFinish() {
-                new ParticleSystem(HighscoreActivity.this, 200, R.drawable.confeti1, 4000)
-                        .setSpeedModuleAndAngleRange(0f, 0.1f, 180, 180)
-                        .setRotationSpeed(144)
-                        .setFadeOut(500)
-                        .setAcceleration(0.00008f, 90)
-                        .emit(findViewById(R.id.emiter_top_right), 20);
-
-                new ParticleSystem(HighscoreActivity.this, 200, R.drawable.confeti2, 4000)
-                        .setSpeedModuleAndAngleRange(0f, 0.1f, 0, 0)
-                        .setRotationSpeed(144)
-                        .setFadeOut(500)
-                        .setAcceleration(0.00008f, 90)
-                        .emit(findViewById(R.id.emiter_top_left), 20);
-            }
-        }.start();
-
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,10 +77,11 @@ public class HighscoreActivity extends AppCompatActivity {
                 }
             });
         }
+        startConfetti(1000);
     }
 
     private void setupText() {
-        mHighScoreText = findViewById(R.id.mCongratulationsTitle);
+        TextView mHighScoreText = findViewById(R.id.mCongratulationsTitle);
         String firstWord = "Congratulations!\n";
         String secondWord = "New highscore";
         Spannable titleText = new SpannableString(firstWord + secondWord);
@@ -114,6 +91,7 @@ public class HighscoreActivity extends AppCompatActivity {
                 , firstWord.length() + secondWord.length()
                 , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         );
+
         titleText.setSpan(
                 new StyleSpan(android.graphics.Typeface.BOLD)
                 , 0
@@ -128,7 +106,6 @@ public class HighscoreActivity extends AppCompatActivity {
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
         );
 
-
         titleText.setSpan(
                 new ForegroundColorSpan(Color.WHITE)
                 , 0
@@ -136,7 +113,6 @@ public class HighscoreActivity extends AppCompatActivity {
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         mHighScoreText.setText(titleText);
-        //mHighScoreText.startAnimation(AnimationUtils.loadAnimation(this, R.anim.smooth_appear_aniamtion));
     }
 
     public void soundEffectsSetup() {
@@ -158,5 +134,49 @@ public class HighscoreActivity extends AppCompatActivity {
         finish();
         startActivity(new Intent(this, StartGameActivity.class));
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+    }
+
+    private void startConfetti(long delay) {
+        CountDownTimer countDownToConfeti = new CountDownTimer(delay, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+            }
+
+            @Override
+            public void onFinish() {
+                new ParticleSystem(HighscoreActivity.this, 100, R.drawable.confetti_red, 4000)
+                        .setSpeedModuleAndAngleRange(0f, 0.1f, 180, 180)
+                        .setRotationSpeedRange(30f, 144f)
+                        .addModifier(new AlphaModifier(255, 0, 3500, 4000))
+                        .setScaleRange(0.75f, 1.0f)
+                        .setAcceleration(0.00008f, 90)
+                        .emit(findViewById(R.id.emiter_top_right), 15);
+
+                new ParticleSystem(HighscoreActivity.this, 100, R.drawable.confetti_green, 4500)
+                        .setSpeedModuleAndAngleRange(0f, 0.1f, 0, 0)
+                        .setRotationSpeedRange(30f, 144f)
+                        .setScaleRange(0.75f, 1.0f)
+                        .addModifier(new AlphaModifier(255, 0, 3500, 4500))
+                        .setAcceleration(0.00008f, 90)
+                        .emit(findViewById(R.id.emiter_top_left), 15);
+
+                new ParticleSystem(HighscoreActivity.this, 100, R.drawable.confetti_yellow, 4500)
+                        .setSpeedModuleAndAngleRange(0f, 0.1f, 180, 180)
+                        .setRotationSpeedRange(30f, 144f)
+                        .setScaleRange(0.75f, 1.0f)
+                        .addModifier(new AlphaModifier(255, 0, 3500, 4000))
+                        .setAcceleration(0.00008f, 90)
+                        .emit(findViewById(R.id.emiter_top_right), 15);
+
+                new ParticleSystem(HighscoreActivity.this, 100, R.drawable.confetti_purple, 4500)
+                        .setSpeedModuleAndAngleRange(0f, 0.1f, 0, 0)
+                        .setRotationSpeedRange(30f, 144f)
+                        .setScaleRange(0.75f, 1.0f)
+                        .addModifier(new AlphaModifier(255, 0, 3500, 4500))
+                        .setAcceleration(0.00008f, 90)
+                        .emit(findViewById(R.id.emiter_top_left), 15);
+            }
+        }.start();
     }
 }

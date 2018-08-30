@@ -46,7 +46,6 @@ public class StartGameActivity extends AppCompatActivity {
 
     int soundIds[] = new int[3];
     private boolean soundEnabled;
-    private boolean vibrationEnabled;
     private boolean musicEnabled;
 
     @Override
@@ -57,11 +56,9 @@ public class StartGameActivity extends AppCompatActivity {
         getSettings();
         soundEffectsSetup();
 
-
         if (!isMyServiceRunning(MusicService.class) && musicEnabled) {
             startService(new Intent(this, MusicService.class));
         }
-
 
         container = findViewById(R.id.mStartGameLayout);
         mTitle = findViewById(R.id.mTitle);
@@ -86,12 +83,11 @@ public class StartGameActivity extends AppCompatActivity {
                 ps.setFadeOut(200, new AccelerateInterpolator());
                 ps.oneShot(findViewById(R.id.mStartButton), 400);
 
-                if (soundEnabled == true) {
+                if (soundEnabled) {
                     mySoundPool.play(soundIds[0], 1, 1, 1, 0, 1.0f);
                 }
 
                 final CountDownTimer gameStartTimer = new CountDownTimer(1000, 1000) {
-
 
                     public void onTick(long millisUntilFinished) {
                     }
@@ -120,7 +116,7 @@ public class StartGameActivity extends AppCompatActivity {
         mSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (soundEnabled == true) {
+                if (soundEnabled) {
                     mySoundPool.play(soundIds[1], 0.25f, 0.25f, 1, 0, 1.0f);
                 }
                 Intent intent = new Intent(getBaseContext(), SettingsActivity.class);
@@ -133,7 +129,7 @@ public class StartGameActivity extends AppCompatActivity {
         mLeaderboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (soundEnabled == true) {
+                if (soundEnabled) {
                     mySoundPool.play(soundIds[1], 0.25f, 0.25f, 1, 0, 1.0f);
                 }
                 Intent intent = new Intent(getApplicationContext(), LeaderboardActivity.class);
@@ -182,12 +178,9 @@ public class StartGameActivity extends AppCompatActivity {
     }
 
     public void getSettings() {
-
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
-        vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
-        musicEnabled = sharedPreferences.getBoolean("ENABLE_MAIN_MENU_MUSIC",true);
-
+        musicEnabled = sharedPreferences.getBoolean("ENABLE_MAIN_MENU_MUSIC", true);
     }
 
     @Override
@@ -235,13 +228,12 @@ public class StartGameActivity extends AppCompatActivity {
                 , firstWord.length()
                 , Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-
         mTitle.setText(titleText);
-
     }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        assert manager != null;
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;

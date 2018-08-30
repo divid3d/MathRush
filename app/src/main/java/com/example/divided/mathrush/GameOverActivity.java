@@ -44,24 +44,10 @@ public class GameOverActivity extends AppCompatActivity {
     IndicatorView myIndicatorView;
 
     private SoundPool mySoundPool;
+    private ArrayList<ScoreInformation>[] scoreLists = (ArrayList<ScoreInformation>[]) new ArrayList[3];
     private int soundIds[] = new int[3];
     private boolean soundEnabled;
     private int gameDifficultyLevel;
-
-    private ArrayList<ScoreInformation>[] scoreLists = (ArrayList<ScoreInformation>[]) new ArrayList[3];
-
-    public void getSettings() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
-        gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "0"));
-    }
-
-    private void quitGame() {
-        moveTaskToBack(true);
-        android.os.Process.killProcess(android.os.Process.myPid());
-        System.exit(1);
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,41 +56,29 @@ public class GameOverActivity extends AppCompatActivity {
 
         getSettings();
         soundEffectsSetup();
-
-
         myDb = new ScoresDatabaseHelper(this);
-
         scoreLists = myDb.loadScoresFromDatabase();
-
         container = findViewById(R.id.mGameOverLayout);
         mRetryButton = findViewById(R.id.mRetryButton);
         mGameOver = findViewById(R.id.mGameOver);
-        ValueAnimator valueAnimator = ObjectAnimator.ofInt(
-                mGameOver, // Target object
-                "TextColor", // Property name
-                0xFFFF0000, // Value
-                0xFFFF6262 // Value
-        );
+        mQuitButton = findViewById(R.id.mQuitButton);
+        mClearRanking = findViewById(R.id.mClearRanking);
+        mSummary = findViewById(R.id.mSummary);
+        myIndicatorView = findViewById(R.id.mIndicatorView);
+        mRecyclerView = findViewById(R.id.mScoreView);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        DividerItemDecoration itemDecorator = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
+        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_thick)));
+        mRecyclerView.addItemDecoration(itemDecorator);
 
+        ValueAnimator valueAnimator = ObjectAnimator.ofInt(mGameOver, "TextColor", 0xFFFF0000, 0xFFFF6262);
         valueAnimator.setEvaluator(new ArgbEvaluator());
         valueAnimator.setDuration(3000);
         valueAnimator.setRepeatCount(-1);
         valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
         valueAnimator.start();
 
-        mQuitButton = findViewById(R.id.mQuitButton);
-        mClearRanking = findViewById(R.id.mClearRanking);
-        mSummary = findViewById(R.id.mSummary);
-        mRecyclerView = findViewById(R.id.mScoreView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        DividerItemDecoration itemDecorator = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
-        itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_thick)));
-        mRecyclerView.addItemDecoration(itemDecorator);
-
-
-        myIndicatorView = findViewById(R.id.mIndicatorView);
         String labels[] = new String[3];
         labels[0] = "Easy";
         labels[1] = "Medium";
@@ -171,16 +145,12 @@ public class GameOverActivity extends AppCompatActivity {
         mRetryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mRetryButton.setEnabled(false);
                 mQuitButton.setEnabled(false);
                 if (soundEnabled) {
                     mySoundPool.play(soundIds[2], 1, 1, 1, 0, 1.0f);
-
                 }
                 CountDownTimer gameStartTimer = new CountDownTimer(1000, 1000) {
-
-
                     public void onTick(long millisUntilFinished) {
                     }
 
@@ -202,8 +172,6 @@ public class GameOverActivity extends AppCompatActivity {
                 quitGame();
             }
         });
-
-
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             final int score = extras.getInt("SCORE");
@@ -224,7 +192,6 @@ public class GameOverActivity extends AppCompatActivity {
                         mRecyclerView.setAdapter(scoreAdapter);
                         final int indexOfScore = myDb.getRankingPlace(newScore, gameDifficultyLevel);
                         mSummary.append("\nYou took " + indexOfScore + " place!");
-
                         RecyclerView.SmoothScroller smoothScroller = new
                                 LinearSmoothScroller(getApplicationContext()) {
                                     @Override
@@ -232,7 +199,6 @@ public class GameOverActivity extends AppCompatActivity {
                                         return LinearSmoothScroller.SNAP_TO_START;
                                     }
                                 };
-
                         smoothScroller.setTargetPosition(indexOfScore);
                         scoreAdapter.notifyDataSetChanged();
                         mRecyclerView
@@ -244,23 +210,6 @@ public class GameOverActivity extends AppCompatActivity {
             }
             mRetryButton.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.pulse_animation));
         }
-    }
-
-    public void soundEffectsSetup() {
-        AudioAttributes attrs = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-        mySoundPool = new SoundPool.Builder()
-                .setMaxStreams(3)
-                .setAudioAttributes(attrs)
-                .build();
-
-        setVolumeControlStream(AudioManager.STREAM_MUSIC);
-
-        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
-        soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
-        soundIds[2] = mySoundPool.load(this, R.raw.start_click_new, 1);
     }
 
     @Override
@@ -278,5 +227,34 @@ public class GameOverActivity extends AppCompatActivity {
         Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
+    }
+
+    public void getSettings() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
+        gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "0"));
+    }
+
+    private void quitGame() {
+        moveTaskToBack(true);
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(1);
+    }
+
+    public void soundEffectsSetup() {
+        AudioAttributes attrs = new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_GAME)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build();
+        mySoundPool = new SoundPool.Builder()
+                .setMaxStreams(3)
+                .setAudioAttributes(attrs)
+                .build();
+
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer, 1);
+        soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
+        soundIds[2] = mySoundPool.load(this, R.raw.start_click_new, 1);
     }
 }

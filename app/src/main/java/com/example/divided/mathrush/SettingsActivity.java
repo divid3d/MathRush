@@ -24,10 +24,6 @@ public class SettingsActivity extends PreferenceActivity {
 
     Vibrator vibrator;
     private AppCompatDelegate mDelegate;
-    private Toolbar mToolbar;
-    private Preference vibrationPreferance;
-    private Preference soundEffectsPreferance;
-    private Preference musicPreferance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,36 +31,31 @@ public class SettingsActivity extends PreferenceActivity {
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        setSupportActionBar((Toolbar) findViewById(R.id.mToolbar));
+        final ImageView settingsIcon = findViewById(R.id.toolbar_logo);
         addPreferencesFromResource(R.xml.app_preferences);
 
-        final ImageView settingsIcon = findViewById(R.id.toolbar_logo);
-
-        mToolbar = findViewById(R.id.mToolbar);
-
+        Toolbar mToolbar = findViewById(R.id.mToolbar);
+        setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_round_arrow_back_ios_24px);
         mToolbar.setTitleTextColor(Color.WHITE);
 
-        Animation toolbarSlideInAnimation = AnimationUtils.loadAnimation(this,R.anim.slide_in_right);
-        toolbarSlideInAnimation.setAnimationListener(new Animation.AnimationListener() {
+        final Animation toolbarSlideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        toolbarSlideIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                settingsIcon.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(),R.anim.settings_icon));
-
+                settingsIcon.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.settings_icon));
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
-        mToolbar.startAnimation(toolbarSlideInAnimation);
 
+        mToolbar.startAnimation(toolbarSlideIn);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,9 +64,8 @@ public class SettingsActivity extends PreferenceActivity {
         });
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        vibrationPreferance = findPreference("ENABLE_VIBRATION");
-        vibrationPreferance.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference vibrationPreference = findPreference("ENABLE_VIBRATION");
+        vibrationPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
 
@@ -89,8 +79,8 @@ public class SettingsActivity extends PreferenceActivity {
             }
         });
 
-        soundEffectsPreferance = findPreference("ENABLE_SOUND_EFFECTS");
-        soundEffectsPreferance.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference soundEffectsPreference = findPreference("ENABLE_SOUND_EFFECTS");
+        soundEffectsPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
 
@@ -108,13 +98,12 @@ public class SettingsActivity extends PreferenceActivity {
                         }
                     });
                 }
-
                 return false;
             }
         });
 
-        musicPreferance = findPreference("ENABLE_MAIN_MENU_MUSIC");
-        musicPreferance.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        Preference musicPreference = findPreference("ENABLE_MAIN_MENU_MUSIC");
+        musicPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 final boolean soundEffectsEnabled = PreferenceManager
@@ -137,6 +126,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        assert manager != null;
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
                 return true;

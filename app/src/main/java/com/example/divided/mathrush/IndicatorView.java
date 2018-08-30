@@ -21,6 +21,7 @@ public class IndicatorView extends LinearLayout {
     private int fromIndex;
     private int toIndex;
     private int currentPositionIndex;
+
     @SuppressLint("UseSparseArrays")
     private HashMap<Integer, String> textHashMap = new HashMap<>();
     private OnPositionChangeListener listener;
@@ -31,6 +32,7 @@ public class IndicatorView extends LinearLayout {
     private Animation arrowClicked = AnimationUtils.loadAnimation(getContext(), R.anim.arrow_click_animation);
     private Animation arrowFadein = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
     private Animation arrowFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+
     public IndicatorView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);

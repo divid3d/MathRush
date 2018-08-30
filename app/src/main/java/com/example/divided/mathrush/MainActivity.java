@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
     }
 
     private int resultOfOperation(char operation, int firstElement, int secondElement) {
@@ -197,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
                 correctAnswer = firstElement * secondElement;
                 break;
             case ':':
-
                 if (firstElement % secondElement == 0 && Math.abs(secondElement) > 1 && Math.abs(firstElement) != Math.abs(secondElement)) {
                     correctAnswer = firstElement / secondElement;
                 } else {
@@ -218,13 +216,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         whichButtonIsCorrect = randomGenerator.nextInt(4) + 1;
-
         buttonsSetup(buttons, whichButtonIsCorrect, correctAnswer);
         mEquationBox.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_instantly));
-
         mTimeLeftBar.setProgress(mTimeLeftBar.getMax());
         timeLeftCountDownTimer.start();
-
     }
 
     @Override
@@ -235,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
         getSettings();
         soundEffectsSetup();
 
-        //array initialize
         operationArray[0] = '+';
         operationArray[1] = '-';
         operationArray[2] = '*';
@@ -251,7 +245,6 @@ public class MainActivity extends AppCompatActivity {
         mRoundScore = findViewById(R.id.mRoundScore);
         mLivesView = findViewById(R.id.mLivesView);
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
 
         timeLeftCountDownTimer = new CountDownTimer(5000, 1) {
 
@@ -279,7 +272,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                     mTimeLeftBar.setProgress(0);
                     if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
-
                         Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
                         intent.putExtra("HIGH_SCORE", score);
                         intent.putExtra("ROUND", roundNumber);
@@ -334,9 +326,7 @@ public class MainActivity extends AppCompatActivity {
                             if (vibrator.hasVibrator() && vibrationEnabled) {
                                 vibrator.vibrate(1100);
                             }
-
                             if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
-
                                 Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
                                 intent.putExtra("HIGH_SCORE", score);
                                 intent.putExtra("ROUND", roundNumber);
@@ -368,6 +358,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mySoundPool.release();
-
     }
 }

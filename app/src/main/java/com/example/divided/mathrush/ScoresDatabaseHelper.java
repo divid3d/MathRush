@@ -75,7 +75,6 @@ public class ScoresDatabaseHelper extends SQLiteOpenHelper {
                 res.close();
                 return place;
             }
-
         } else if (difficultyLevel == 1) {
             Cursor res = db.rawQuery("SELECT * FROM " + TABLE_MEDIUM_NAME + " WHERE " + COL3 + " >" + scoreInformation.getScore() + " ORDER BY " + COL3 + " DESC", null);
             if (res != null) {
@@ -93,10 +92,11 @@ public class ScoresDatabaseHelper extends SQLiteOpenHelper {
         }
         return 0; // means error
     }
-    public ArrayList<ScoreInformation>[] loadScoresFromDatabase(){
+
+    public ArrayList<ScoreInformation>[] loadScoresFromDatabase() {
         ArrayList<ScoreInformation>[] scoreLists = (ArrayList<ScoreInformation>[]) new ArrayList[3];
-       
-        for(int i =0;i <3;i++) {
+
+        for (int i = 0; i < 3; i++) {
             scoreLists[i] = new ArrayList<>();
             Cursor res = this.getScores(i);
             if (res.getCount() != 0) {
@@ -104,16 +104,15 @@ public class ScoresDatabaseHelper extends SQLiteOpenHelper {
                     final String name = res.getString(1);
                     final int score = res.getInt(2);
                     final int round = res.getInt(3);
-
                     ScoreInformation newScore = new ScoreInformation(name, round, score);
                     scoreLists[i].add(newScore);
                 }
             }
         }
-
         return scoreLists;
     }
-    public Cursor getScores(int difficultyLevel) {
+
+    private Cursor getScores(int difficultyLevel) {
         SQLiteDatabase db = this.getWritableDatabase();
         if (difficultyLevel == 0) {
             return db.rawQuery("SELECT * FROM " + TABLE_EASY_NAME + " ORDER BY " + COL3 + " DESC", null);

@@ -33,7 +33,6 @@ public class LeaderboardActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private SoundPool mySoundPool;
     private AppCompatDelegate mDelegate;
-    private Toolbar mToolbar;
     private int soundIds[] = new int[3];
 
     private IndicatorView myIndicatorView;
@@ -44,10 +43,9 @@ public class LeaderboardActivity extends AppCompatActivity {
         getDelegate().onCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_leaderboard);
-        setSupportActionBar((Toolbar) findViewById(R.id.mToolbar));
 
-        mToolbar = findViewById(R.id.mToolbar);
-
+        Toolbar mToolbar = findViewById(R.id.mToolbar);
+        setSupportActionBar(mToolbar);
         mToolbar.setNavigationIcon(R.drawable.ic_round_arrow_back_ios_24px);
         mToolbar.setTitleTextColor(Color.WHITE);
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -56,7 +54,7 @@ public class LeaderboardActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        mToolbar.startAnimation(AnimationUtils.loadAnimation(this,R.anim.slide_in_right));
+        mToolbar.startAnimation(AnimationUtils.loadAnimation(this, R.anim.slide_in_right));
 
         myDb = new ScoresDatabaseHelper(this);
 
@@ -94,6 +92,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         DividerItemDecoration itemDecorator = new DividerItemDecoration(getApplicationContext(), DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(getApplicationContext(), R.drawable.border_thick)));
         mRecyclerView.addItemDecoration(itemDecorator);
+
         mClearRanking = findViewById(R.id.mClearRanking);
         mClearRanking.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,6 +160,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
         soundIds[2] = mySoundPool.load(this, R.raw.start_click_new, 1);
     }
+
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);

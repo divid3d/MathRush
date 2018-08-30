@@ -1,5 +1,6 @@
 package com.example.divided.mathrush;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,17 +17,16 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.MyViewHold
         this.scoresList = scoresList;
     }
 
-
+    @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.score_row, parent, false);
-
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ScoreInformation score = scoresList.get(position);
         holder.rankingPlance.setText(Integer.toString(position + 1));
         holder.name.setText(score.getName());
@@ -39,15 +39,15 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.MyViewHold
         return scoresList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView name, score, round, rankingPlance;
 
         MyViewHolder(View view) {
             super(view);
-            rankingPlance = (TextView) view.findViewById(R.id.mRankingPlace);
-            name = (TextView) view.findViewById(R.id.title);
-            round = (TextView) view.findViewById(R.id.genre);
-            score = (TextView) view.findViewById(R.id.year);
+            rankingPlance = view.findViewById(R.id.mRankingPlace);
+            name = view.findViewById(R.id.title);
+            round = view.findViewById(R.id.genre);
+            score = view.findViewById(R.id.year);
         }
     }
 }
