@@ -28,7 +28,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         ScoreInformation score = scoresList.get(position);
-        holder.rankingPlance.setText(Integer.toString(position + 1));
+        holder.rankingPlace.setText(Integer.toString(position + 1));
         holder.name.setText(score.getName());
         holder.round.setText("Round: " + score.getRound());
         holder.score.setText("Score: " + score.getScore());
@@ -40,11 +40,11 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.MyViewHold
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView name, score, round, rankingPlance;
+        private TextView name, score, round, rankingPlace;
 
         MyViewHolder(View view) {
             super(view);
-            rankingPlance = view.findViewById(R.id.mRankingPlace);
+            rankingPlace = view.findViewById(R.id.mRankingPlace);
             name = view.findViewById(R.id.title);
             round = view.findViewById(R.id.genre);
             score = view.findViewById(R.id.year);

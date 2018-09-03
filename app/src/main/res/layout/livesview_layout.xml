@@ -13,6 +13,7 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/ic_heart_icon" />
 
+
     <android.support.v7.widget.AppCompatImageView
         android:id="@+id/mHeart2"
         android:layout_width="wrap_content"

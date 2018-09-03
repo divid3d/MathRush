@@ -21,5 +21,4 @@
         android:interpolator="@android:anim/accelerate_interpolator"
         android:startOffset="@android:integer/config_shortAnimTime"
         android:toAlpha="0.0" />
-
 </set>

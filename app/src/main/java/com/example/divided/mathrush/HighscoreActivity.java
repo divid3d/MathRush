@@ -63,11 +63,12 @@ public class HighscoreActivity extends AppCompatActivity {
                 }
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in_instantly, R.anim.fade_out);
+                finish();
             }
         });
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            final int highScore = extras.getInt("HIGH_SCORE");
+            final int highScore = extras.getInt("SCORE");
             mScore.setText(Integer.toString(highScore));
             mScore.addAnimatorListener(new AnimatorListenerAdapter() {
                 @Override
@@ -77,7 +78,7 @@ public class HighscoreActivity extends AppCompatActivity {
                 }
             });
         }
-        startConfetti(1000);
+        startConfetti(1500);
     }
 
     private void setupText() {
@@ -137,7 +138,7 @@ public class HighscoreActivity extends AppCompatActivity {
     }
 
     private void startConfetti(long delay) {
-        CountDownTimer countDownToConfeti = new CountDownTimer(delay, 1000) {
+        new CountDownTimer(delay, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 

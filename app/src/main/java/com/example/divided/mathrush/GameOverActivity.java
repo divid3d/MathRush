@@ -160,6 +160,7 @@ public class GameOverActivity extends AppCompatActivity {
                         finish();
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
                     }
                 };
                 gameStartTimer.start();
@@ -178,7 +179,6 @@ public class GameOverActivity extends AppCompatActivity {
             final int round = extras.getInt("ROUND");
 
             mSummary.setText("Your score:\t" + score + "\n" + "Round:\t" + round);
-
             if (score > 0) {
                 ScoreDialog scoreDialog = new ScoreDialog();
                 scoreDialog.setOnNameConfirmationListener(new ScoreDialog.OnNameConfirmationListener() {
@@ -227,6 +227,7 @@ public class GameOverActivity extends AppCompatActivity {
         Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
+        finish();
     }
 
     public void getSettings() {

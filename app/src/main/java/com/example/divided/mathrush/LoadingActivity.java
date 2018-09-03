@@ -30,6 +30,7 @@ public class LoadingActivity extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fade_in_fast, R.anim.fade_out_fast);
+                finish();
             }
         }.start();
     }

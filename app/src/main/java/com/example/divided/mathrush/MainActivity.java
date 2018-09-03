@@ -33,16 +33,13 @@ public class MainActivity extends AppCompatActivity {
     TextSwitcher mTimeLeftTextView;
     TextView mRoundScore;
     LivesView mLivesView;
-
     SoundPool mySoundPool;
-
     Vibrator vibrator;
+    Button[] buttons = new Button[4];
+    CountDownTimer timeLeftCountDownTimer;
     long[] vibrationPattern = {0, 100, 100, 500};
 
-    Button[] buttons = new Button[4];
-
-    CountDownTimer timeLeftCountDownTimer;
-    int soundIds[] = new int[2];
+    int soundIds[] = new int[3];
     private NumberProgressBar mTimeLeftBar;
     private int roundNumber = 1;
     private int score = 0;
@@ -52,6 +49,169 @@ public class MainActivity extends AppCompatActivity {
     private boolean soundEnabled;
     private boolean vibrationEnabled;
     private int gameDifficultyLevel;
+
+    private static int getRandomIntegerInRange(int min, int max, boolean zeroInclusive, int seed) {
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+        Random r = new Random();
+        r.setSeed(System.currentTimeMillis() * seed);
+        int result;
+        if (zeroInclusive) {
+            return r.nextInt((max - min) + 1) + min;
+        } else {
+            do {
+                result = r.nextInt((max - min) + 1) + min;
+            } while (result == 0);
+            return result;
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        timeLeftCountDownTimer.cancel();
+        Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mySoundPool.release();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        getSettings();
+        soundEffectsSetup();
+
+        operationArray[0] = '+';
+        operationArray[1] = '-';
+        operationArray[2] = '*';
+        operationArray[3] = ':';
+
+        mEquationBox = findViewById(R.id.mEquationBox);
+        mRoundBox = findViewById(R.id.mRoundBox);
+        mRoundBox.setCharacterLists(TickerUtils.provideNumberList());
+        mScoreBox = findViewById(R.id.mScoreBox);
+        mScoreBox.setCharacterLists(TickerUtils.provideNumberList());
+        mTimeLeftTextView = findViewById(R.id.mTimeLeftTextView);
+        mTimeLeftBar = findViewById(R.id.mTimeLeftBar);
+        mRoundScore = findViewById(R.id.mRoundScore);
+        mLivesView = findViewById(R.id.mLivesView);
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        timeLeftCountDownTimer = new CountDownTimer(5000, 1) {
+
+            public void onTick(long millisUntilFinished) {
+                TextView currentTextView = (TextView) mTimeLeftTextView.getCurrentView();
+                final String currentText = currentTextView.getText().toString();
+                if (!currentText.equals(String.valueOf(((millisUntilFinished / 1000)) + 1))) {
+                    if(soundEnabled) {
+                        mySoundPool.play(soundIds[2], 1, 1, 1, 0, 1f);
+                    }
+                    mTimeLeftTextView.setText(String.valueOf(((millisUntilFinished / 1000)) + 1));
+                }
+                timeLeft = (int) millisUntilFinished;
+                mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
+            }
+
+            public void onFinish() {
+
+                if (mLivesView.getLifesCount() > 1) {
+                    if (vibrator.hasVibrator() && vibrationEnabled) {
+                        vibrator.vibrate(vibrationPattern, -1);
+                    }
+                    mLivesView.takeAwayOneLife();
+                    roundInit(roundNumber, gameDifficultyLevel);
+                } else {
+                    if (vibrator.hasVibrator() && vibrationEnabled) {
+                        vibrator.vibrate(1100);
+                    }
+                    mTimeLeftBar.setProgress(0);
+                    if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
+                        Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
+                        intent.putExtra("HIGH_SCORE", score);
+                        intent.putExtra("ROUND", roundNumber);
+                        intent.putExtra("SCORE", score);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.transition_in_highscore_activity, R.anim.fade_out);
+                        finish();
+                    } else {
+                        Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                        intent.putExtra("ROUND", roundNumber);
+                        intent.putExtra("SCORE", score);
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
+                    }
+                }
+            }
+        };
+
+        buttons[0] = findViewById(R.id.mAnswerButton1);
+        buttons[1] = findViewById(R.id.mAnswerButton2);
+        buttons[2] = findViewById(R.id.mAnswerButton3);
+        buttons[3] = findViewById(R.id.mAnswerButton4);
+
+        for (int i = 0; i < buttons.length; i++) {
+            final int indexOfButton = i + 1;
+            buttons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (whichButtonIsCorrect == indexOfButton) {
+                        if (soundEnabled) {
+                            mySoundPool.play(soundIds[0], 1, 1, 2, 0, 1.0f);
+                        }
+                        roundNumber++;
+                        score = score + (roundNumber * (timeLeft / 100));
+                        mRoundScore.setText("+" + (roundNumber * (timeLeft / 100)));
+                        mRoundScore.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
+                        timeLeftCountDownTimer.cancel();
+                        roundInit(roundNumber, gameDifficultyLevel);
+                    } else {
+                        if (mLivesView.getLifesCount() > 1) {
+                            if (vibrator.hasVibrator() && vibrationEnabled) {
+                                vibrator.vibrate(vibrationPattern, -1);
+                            }
+                            if (soundEnabled) {
+                                mySoundPool.play(soundIds[1], 1, 1, 2, 0, 1.0f);
+                            }
+                            mLivesView.takeAwayOneLife();
+                            roundInit(roundNumber, gameDifficultyLevel);
+                        } else {
+                            if (soundEnabled) {
+                                mySoundPool.play(soundIds[1], 1, 1, 2, 0, 1.0f);
+                            }
+                            timeLeftCountDownTimer.cancel();
+                            if (vibrator.hasVibrator() && vibrationEnabled) {
+                                vibrator.vibrate(1100);
+                            }
+                            if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
+                                Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
+                                intent.putExtra("ROUND", roundNumber);
+                                intent.putExtra("SCORE", score);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.transition_in_highscore_activity, R.anim.fade_out);
+                                finish();
+                            } else {
+                                Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
+                                intent.putExtra("ROUND", roundNumber);
+                                intent.putExtra("SCORE", score);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                                finish();
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        roundInit(roundNumber, gameDifficultyLevel);
+    }
 
     public void soundEffectsSetup() {
         AudioAttributes attrs = new AudioAttributes.Builder()
@@ -65,8 +225,9 @@ public class MainActivity extends AppCompatActivity {
 
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
 
-        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer_newest, 1);
-        soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 1);
+        soundIds[0] = mySoundPool.load(this, R.raw.correct_answer_newest, 2);
+        soundIds[1] = mySoundPool.load(this, R.raw.incorrect_answer, 2);
+        soundIds[2] = mySoundPool.load(this,R.raw.clock_tick,1);
     }
 
     public void getSettings() {
@@ -74,12 +235,6 @@ public class MainActivity extends AppCompatActivity {
         soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
         vibrationEnabled = sharedPreferences.getBoolean("ENABLE_VIBRATION", true);
         gameDifficultyLevel = Integer.parseInt(sharedPreferences.getString("DIFFICULTY_LEVEL", "1"));
-    }
-
-    private int randomSign(boolean isPositive) {
-        if (isPositive) {
-            return 1;
-        } else return -1;
     }
 
     private void buttonsSetup(Button[] buttons, int whichButtonIsCorrect, int correctAnswer) {
@@ -138,225 +293,88 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void roundInit(int roundNumber, int gameDifficultyLevel) {
+        int firstElement = 0;
+        int secondElement = 0;
+        int result = 0;
+        char operation;
+
         for (Button button : buttons) {
             button.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_instantly));
         }
         mEquationBox.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_out_instantly));
-
-        Random randomGenerator = new Random();
-        randomGenerator.setSeed(System.currentTimeMillis());
-
         mRoundBox.setText(Integer.toString(roundNumber));
         mScoreBox.setText(Integer.toString(score));
 
-        int correctAnswer = 0;
-        int firstElement;
-        int secondElement;
-        int whichOperation;
+        if (gameDifficultyLevel == 0) {
+            operation = operationArray[getRandomIntegerInRange(0, 1, true, roundNumber)];
+        } else {
+            operation = operationArray[getRandomIntegerInRange(0, 3, true, roundNumber)];
+        }
+
+
+        int minNumberBound = -50 * (gameDifficultyLevel + 1);
+        final int maxNumberBound = 50 * (gameDifficultyLevel + 1);
 
         if (gameDifficultyLevel == 0) {
-            whichOperation = randomGenerator.nextInt(2);
-        } else {
-            whichOperation = randomGenerator.nextInt(4);
+            minNumberBound = 1;
         }
 
-        if (operationArray[whichOperation] == '*') {
-
-            if (gameDifficultyLevel == 0) {
-                do {
-                    firstElement = (randomGenerator.nextInt(20) + 1);
-                    secondElement = (randomGenerator.nextInt(20) + 1);
-                }
-                while (Math.abs(resultOfOperation(operationArray[whichOperation], firstElement, secondElement)) > 50);
-            } else {
-                firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
-                secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(20) + 1);
-            }
-        } else {
-            if (gameDifficultyLevel == 0) {
-                do {
-                    firstElement = (randomGenerator.nextInt(20) + 1);
-                    secondElement = (randomGenerator.nextInt(20) + 1);
-                }
-                while (Math.abs(resultOfOperation(operationArray[whichOperation], firstElement, secondElement)) > 50);
-            } else {
-                firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
-                secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
-            }
-        }
-
-        switch (operationArray[whichOperation]) {
+        switch (operation) {
             case '+':
-                correctAnswer = firstElement + secondElement;
-                break;
-            case '-':
-                correctAnswer = firstElement - secondElement;
-                break;
-            case '*':
-                correctAnswer = firstElement * secondElement;
-                break;
-            case ':':
-                if (firstElement % secondElement == 0 && Math.abs(secondElement) > 1 && Math.abs(firstElement) != Math.abs(secondElement)) {
-                    correctAnswer = firstElement / secondElement;
-                } else {
-                    while (firstElement % secondElement != 0 || Math.abs(secondElement) == 1 || Math.abs(firstElement) == Math.abs(secondElement)) {
-                        firstElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
-                        secondElement = randomSign(randomGenerator.nextBoolean()) * (randomGenerator.nextInt(100) + 1);
-                    }
-                    correctAnswer = firstElement / secondElement;
+                do {
+                    firstElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    secondElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    result = resultOfOperation(operation, firstElement, secondElement);
                 }
+                while (Math.abs(firstElement) == Math.abs(secondElement)
+                        || Math.abs(result) > 100 * (gameDifficultyLevel + 1));
+                break;
+
+            case '-':
+                do {
+                    firstElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    secondElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    result = resultOfOperation(operation, firstElement, secondElement);
+                }
+                while (Math.abs(firstElement) == Math.abs(secondElement) || Math.abs(result) > 100 * (gameDifficultyLevel + 1));
+                break;
+
+            case '*':
+                do {
+                    firstElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    secondElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    result = resultOfOperation(operation, firstElement, secondElement);
+                }
+                while (Math.abs(firstElement) == Math.abs(secondElement)
+                        || Math.abs(result) > 100 * (gameDifficultyLevel + 1)
+                        || Math.abs(firstElement) == 1
+                        || Math.abs(secondElement) == 1);
+                break;
+
+            case ':':
+                do {
+                    firstElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    secondElement = getRandomIntegerInRange(minNumberBound, maxNumberBound, false, roundNumber);
+                    result = resultOfOperation(operation, firstElement, secondElement);
+                }
+                while (Math.abs(firstElement) == Math.abs(secondElement)
+                        || Math.abs(result) > 100 * (gameDifficultyLevel + 1)
+                        || Math.abs(firstElement) % Math.abs(secondElement) != 0
+                        || Math.abs(firstElement) == 1
+                        || Math.abs(secondElement) == 1);
+                break;
         }
 
         if (secondElement < 0) {
-            String toShow = firstElement + " " + operationArray[whichOperation] + " " + "(" + secondElement + ")" + " = ";
-            mEquationBox.setText(toShow);
+            mEquationBox.setText(firstElement + " " + operation + " " + "(" + secondElement + ")" + " = ");
         } else {
-            String toShow = firstElement + " " + operationArray[whichOperation] + " " + secondElement + " = ";
-            mEquationBox.setText(toShow);
+            mEquationBox.setText(firstElement + " " + operation + " " + secondElement + " = ");
         }
 
-        whichButtonIsCorrect = randomGenerator.nextInt(4) + 1;
-        buttonsSetup(buttons, whichButtonIsCorrect, correctAnswer);
+        whichButtonIsCorrect = getRandomIntegerInRange(1, 4, false, roundNumber);
+        buttonsSetup(buttons, whichButtonIsCorrect, result);
         mEquationBox.startAnimation(AnimationUtils.loadAnimation(this, R.anim.fade_in_instantly));
         mTimeLeftBar.setProgress(mTimeLeftBar.getMax());
         timeLeftCountDownTimer.start();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        getSettings();
-        soundEffectsSetup();
-
-        operationArray[0] = '+';
-        operationArray[1] = '-';
-        operationArray[2] = '*';
-        operationArray[3] = ':';
-
-        mEquationBox = findViewById(R.id.mEquationBox);
-        mRoundBox = findViewById(R.id.mRoundBox);
-        mRoundBox.setCharacterLists(TickerUtils.provideNumberList());
-        mScoreBox = findViewById(R.id.mScoreBox);
-        mScoreBox.setCharacterLists(TickerUtils.provideNumberList());
-        mTimeLeftTextView = findViewById(R.id.mTimeLeftTextView);
-        mTimeLeftBar = findViewById(R.id.mTimeLeftBar);
-        mRoundScore = findViewById(R.id.mRoundScore);
-        mLivesView = findViewById(R.id.mLivesView);
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        timeLeftCountDownTimer = new CountDownTimer(5000, 1) {
-
-            public void onTick(long millisUntilFinished) {
-                TextView currentTextView = (TextView) mTimeLeftTextView.getCurrentView();
-                final String currentText = currentTextView.getText().toString();
-                if (!currentText.equals(String.valueOf(((millisUntilFinished / 1000)) + 1))) {
-                    mTimeLeftTextView.setText(String.valueOf(((millisUntilFinished / 1000)) + 1));
-                }
-                timeLeft = (int) millisUntilFinished;
-                mTimeLeftBar.setProgress(mTimeLeftBar.getMax() - (5000 - (int) millisUntilFinished));
-            }
-
-            public void onFinish() {
-
-                if (mLivesView.getLifesCount() > 1) {
-                    if (vibrator.hasVibrator() && vibrationEnabled) {
-                        vibrator.vibrate(vibrationPattern, -1);
-                    }
-                    mLivesView.takeAwayOneLife();
-                    roundInit(roundNumber, gameDifficultyLevel);
-                } else {
-                    if (vibrator.hasVibrator() && vibrationEnabled) {
-                        vibrator.vibrate(1100);
-                    }
-                    mTimeLeftBar.setProgress(0);
-                    if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
-                        Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
-                        intent.putExtra("HIGH_SCORE", score);
-                        intent.putExtra("ROUND", roundNumber);
-                        intent.putExtra("SCORE", score);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.transition_in_highscore_activity, R.anim.fade_out);
-                    } else {
-                        Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                        intent.putExtra("ROUND", roundNumber);
-                        intent.putExtra("SCORE", score);
-                        startActivity(intent);
-                    }
-                }
-            }
-        };
-
-        buttons[0] = findViewById(R.id.mAnswerButton1);
-        buttons[1] = findViewById(R.id.mAnswerButton2);
-        buttons[2] = findViewById(R.id.mAnswerButton3);
-        buttons[3] = findViewById(R.id.mAnswerButton4);
-
-        for (int i = 0; i < buttons.length; i++) {
-            final int indexOfButton = i + 1;
-            buttons[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (whichButtonIsCorrect == indexOfButton) {
-                        if (soundEnabled) {
-                            mySoundPool.play(soundIds[0], 1, 1, 1, 0, 1.0f);
-                        }
-                        roundNumber++;
-                        score = score + (roundNumber * (timeLeft / 100));
-                        mRoundScore.setText("+" + (roundNumber * (timeLeft / 100)));
-                        mRoundScore.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_out));
-                        timeLeftCountDownTimer.cancel();
-                        roundInit(roundNumber, gameDifficultyLevel);
-                    } else {
-                        if (mLivesView.getLifesCount() > 1) {
-                            if (vibrator.hasVibrator() && vibrationEnabled) {
-                                vibrator.vibrate(vibrationPattern, -1);
-                            }
-                            if (soundEnabled) {
-                                mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
-                            }
-                            mLivesView.takeAwayOneLife();
-                            roundInit(roundNumber, gameDifficultyLevel);
-                        } else {
-                            if (soundEnabled) {
-                                mySoundPool.play(soundIds[1], 1, 1, 1, 0, 1.0f);
-                            }
-                            timeLeftCountDownTimer.cancel();
-                            if (vibrator.hasVibrator() && vibrationEnabled) {
-                                vibrator.vibrate(1100);
-                            }
-                            if (new ScoresDatabaseHelper(getApplicationContext()).getRankingPlace(new ScoreInformation(null, 0, score), gameDifficultyLevel) == 1) {
-                                Intent intent = new Intent(getApplicationContext(), HighscoreActivity.class);
-                                intent.putExtra("HIGH_SCORE", score);
-                                intent.putExtra("ROUND", roundNumber);
-                                intent.putExtra("SCORE", score);
-                                startActivity(intent);
-                                overridePendingTransition(R.anim.transition_in_highscore_activity, R.anim.fade_out);
-                            } else {
-                                Intent intent = new Intent(getBaseContext(), GameOverActivity.class);
-                                intent.putExtra("ROUND", roundNumber);
-                                intent.putExtra("SCORE", score);
-                                startActivity(intent);
-                            }
-                        }
-                    }
-                }
-            });
-        }
-        roundInit(roundNumber, gameDifficultyLevel);
-    }
-
-    @Override
-    public void onBackPressed() {
-        timeLeftCountDownTimer.cancel();
-        Intent intent = new Intent(getBaseContext(), StartGameActivity.class);
-        startActivity(intent);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mySoundPool.release();
     }
 }

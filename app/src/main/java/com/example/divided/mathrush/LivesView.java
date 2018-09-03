@@ -1,6 +1,7 @@
 package com.example.divided.mathrush;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -74,6 +75,9 @@ public class LivesView extends LinearLayout {
             public void onAnimationEnd(Animation animation) {
                 heart.setVisibility(INVISIBLE);
                 heart.clearAnimation();
+                heart.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_heart_icon_border));
+                heart.startAnimation(AnimationUtils.loadAnimation(getContext(),R.anim.shadow_heart_appear));
+                heart.setVisibility(VISIBLE);
             }
 
             @Override

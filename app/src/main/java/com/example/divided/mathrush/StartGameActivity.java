@@ -54,8 +54,22 @@ public class StartGameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start_game);
 
         getSettings();
-        soundEffectsSetup();
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                if (key.equals("ENABLE_SOUND_EFFECTS")) {
+                    soundEnabled = sharedPreferences.getBoolean("ENABLE_SOUND_EFFECTS", true);
+
+                }
+                if (key.equals("ENABLE_MAIN_MENU_MUSIC")) {
+                    musicEnabled = sharedPreferences.getBoolean("ENABLE_MAIN_MENU_MUSIC", true);
+                }
+            }
+        });
+
+        soundEffectsSetup();
         if (!isMyServiceRunning(MusicService.class) && musicEnabled) {
             startService(new Intent(this, MusicService.class));
         }
@@ -100,6 +114,7 @@ public class StartGameActivity extends AppCompatActivity {
                         intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+                        finish();
                     }
                 };
                 gameStartTimer.start();
@@ -189,6 +204,7 @@ public class StartGameActivity extends AppCompatActivity {
         if (isMyServiceRunning(MusicService.class)) {
             stopService(new Intent(getApplicationContext(), MusicService.class));
         }
+        mySoundPool.release();
     }
 
     private void setupTitle() {
